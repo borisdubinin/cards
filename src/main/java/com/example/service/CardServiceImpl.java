@@ -1,12 +1,12 @@
-package com.example.services;
+package com.example.service;
 
 import java.util.List;
 import java.util.Optional;
 import java.time.YearMonth;
 
-import com.example.models.Card;
-import com.example.models.CardStatus;
-import com.example.exceptions.EntityNotFoundException;
+import com.example.model.Card;
+import com.example.model.CardStatus;
+import com.example.exception.EntityNotFoundException;
 import com.example.repository.CardRepository;
 
 public class CardServiceImpl implements CardService {

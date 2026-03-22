@@ -1,8 +1,8 @@
-package com.example.services;
+package com.example.service;
 
 import java.util.List;
 
-import com.example.models.Card;
+import com.example.model.Card;
 
 public interface CardService {
 

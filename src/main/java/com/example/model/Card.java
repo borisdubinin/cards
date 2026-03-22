@@ -1,4 +1,4 @@
-package com.example.models;
+package com.example.model;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;

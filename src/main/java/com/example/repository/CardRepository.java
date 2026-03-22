@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.example.models.Card;
+import com.example.model.Card;
 
 public class CardRepository {
 

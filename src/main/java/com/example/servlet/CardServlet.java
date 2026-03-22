@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.example.models.Card;
-import com.example.exceptions.EntityNotFoundException;
-import com.example.services.CardService;
-import com.example.services.CardServiceImpl;
+import com.example.model.Card;
+import com.example.exception.EntityNotFoundException;
+import com.example.service.CardService;
+import com.example.service.CardServiceImpl;
 
 @WebServlet("/cards/*")
 public class CardServlet extends HttpServlet {

@@ -17,16 +17,14 @@ public class CardRepository {
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     public CardRepository() {
-        initTestData();
+        initStorage();
     }
 
     public void save(Card card) {
-        if(card.getId() == null) {
+        if (card.getId() == null) {
             card.setId(idGenerator.getAndIncrement());
             card.setCreatedAt(LocalDateTime.now());
-            card.setUpdatedAt(LocalDateTime.now());
-        }
-        else {
+        } else {
             card.setUpdatedAt(LocalDateTime.now());
         }
         storage.put(card.getId(), card);
@@ -44,45 +42,45 @@ public class CardRepository {
         return Optional.ofNullable(storage.remove(id));
     }
 
-    private void initTestData() {
-        Card card1 = new Card();
-        card1.setCardNumber("1234-5678-9012-3456");
-        card1.setCardHolderName("IVAN PETROV");
-        card1.setExpirationDate("2026-12-31");
-        card1.setStatus(CardStatus.ACTIVE);
-        card1.setAccountId(1001L);
-        this.save(card1);
+    private void initStorage() {
+        this.save(Card.builder()
+                .cardNumber("1234-5678-9012-3456")
+                .cardHolderName("IVAN PETROV")
+                .expirationDate("2026-12-31")
+                .status(CardStatus.ACTIVE)
+                .accountId(1001L)
+                .build());
 
-        Card card2 = new Card();
-        card2.setCardNumber("2345-6789-0123-4567");
-        card2.setCardHolderName("MARIA SOKOLOVA");
-        card2.setExpirationDate("2025-06-30");
-        card2.setStatus(CardStatus.ACTIVE);
-        card2.setAccountId(1002L);
-        this.save(card2);
+        this.save(Card.builder()
+                .cardNumber("2345-6789-0123-4567")
+                .cardHolderName("MARIA SOKOLOVA")
+                .expirationDate("2025-06-30")
+                .status(CardStatus.ACTIVE)
+                .accountId(1002L)
+                .build());
 
-        Card card3 = new Card();
-        card3.setCardNumber("3456-7890-1234-5678");
-        card3.setCardHolderName("PETR SIDOROV");
-        card3.setExpirationDate("2027-03-15");
-        card3.setStatus(CardStatus.BLOCKED);
-        card3.setAccountId(1003L);
-        this.save(card3);
+        this.save(Card.builder()
+                .cardNumber("3456-7890-1234-5678")
+                .cardHolderName("PETR SIDOROV")
+                .expirationDate("2027-03-15")
+                .status(CardStatus.BLOCKED)
+                .accountId(1003L)
+                .build());
 
-        Card card4 = new Card();
-        card4.setCardNumber("4567-8901-2345-6789");
-        card4.setCardHolderName("ANNA VOLKOVA");
-        card4.setExpirationDate("2024-12-01"); // скоро истечет
-        card4.setStatus(CardStatus.ACTIVE);
-        card4.setAccountId(1004L);
-        this.save(card4);
+        this.save(Card.builder()
+                .cardNumber("4567-8901-2345-6789")
+                .cardHolderName("ANNA VOLKOVA")
+                .expirationDate("2024-12-01")
+                .status(CardStatus.ACTIVE)
+                .accountId(1004L)
+                .build());
 
-        Card card5 = new Card();
-        card5.setCardNumber("5678-9012-3456-7890");
-        card5.setCardHolderName("ALEXEY MOROZOV");
-        card5.setExpirationDate("2028-01-31");
-        card5.setStatus(CardStatus.ACTIVE);
-        card5.setAccountId(1005L);
-        this.save(card5);
+        this.save(Card.builder()
+                .cardNumber("5678-9012-3456-7890")
+                .cardHolderName("ALEXEY MOROZOV")
+                .expirationDate("2028-01-31")
+                .status(CardStatus.ACTIVE)
+                .accountId(1005L)
+                .build());
     }
 }

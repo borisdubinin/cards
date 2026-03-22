@@ -2,11 +2,13 @@ package com.example.models;
 
 import java.time.LocalDateTime;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 public class Card {
 
     private Long id;
@@ -17,12 +19,4 @@ public class Card {
     private Long accountId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public Card(String cardNumber, String cardHolderName, String expirationDate, CardStatus status, Long accountId) {
-        this.cardNumber = cardNumber;
-        this.cardHolderName = cardHolderName;
-        this.expirationDate = expirationDate;
-        this.status = status;
-        this.accountId = accountId;
-    }
 }

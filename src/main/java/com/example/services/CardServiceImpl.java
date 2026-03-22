@@ -2,6 +2,7 @@ package com.example.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.YearMonth;
 
 import com.example.models.Card;
 import com.example.models.CardStatus;
@@ -14,6 +15,7 @@ public class CardServiceImpl implements CardService {
 
     public CardServiceImpl() {
         this.cardRepository = new CardRepository();
+        initStorage();
     }
 
     @Override
@@ -25,13 +27,17 @@ public class CardServiceImpl implements CardService {
             throw new IllegalArgumentException("Card holder name is required");
         }
 
+        card.setExpirationDate(YearMonth.now().plusYears(3));
+        card.setStatus(CardStatus.NEW);
+        card.setCardNumber(CardNumberGenerator.generateUniqueNumber());
+
         cardRepository.save(card);
     }
 
     @Override
     public Card getCardById(Long id) {
         Optional<Card> card = cardRepository.getById(id);
-        if(card.isPresent()) {
+        if (card.isPresent()) {
             return card.get();
         } else {
             throw new EntityNotFoundException("Card not found with id: " + id);
@@ -81,5 +87,32 @@ public class CardServiceImpl implements CardService {
         }
         card.setStatus(CardStatus.ACTIVE);
         cardRepository.save(card);
+    }
+
+    private void initStorage() {
+        this.createCard(Card.builder()
+                .cardHolderName("IVAN PETROV")
+                .accountId(1001L)
+                .build());
+
+        this.createCard(Card.builder()
+                .cardHolderName("MARIA SOKOLOVA")
+                .accountId(1002L)
+                .build());
+
+        this.createCard(Card.builder()
+                .cardHolderName("PETR SIDOROV")
+                .accountId(1003L)
+                .build());
+
+        this.createCard(Card.builder()
+                .cardHolderName("ANNA VOLKOVA")
+                .accountId(1004L)
+                .build());
+
+        this.createCard(Card.builder()
+                .cardHolderName("ALEXEY MOROZOV")
+                .accountId(1005L)
+                .build());
     }
 }

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.models.Card;
-import com.example.exceptions.CardNotFoundException;
+import com.example.exceptions.EntityNotFoundException;
 import com.example.services.CardService;
 import com.example.services.CardServiceImpl;
 
@@ -26,7 +26,7 @@ public class CardServlet extends HttpServlet {
             } else {
                 handleGetById(pathInfo, resp);
             }
-        } catch (CardNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             sendError(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
@@ -49,7 +49,7 @@ public class CardServlet extends HttpServlet {
             }
         } catch (IllegalArgumentException e) {
             sendError(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-        } catch (CardNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             sendError(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
@@ -68,7 +68,7 @@ public class CardServlet extends HttpServlet {
             handleUpdate(pathInfo, req, resp);
         } catch (IllegalArgumentException e) {
             sendError(resp, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
-        } catch (CardNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             sendError(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
@@ -86,7 +86,7 @@ public class CardServlet extends HttpServlet {
             }
 
             handleDelete(pathInfo, resp);
-        } catch (CardNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             sendError(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
         } catch (Exception e) {
             sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());

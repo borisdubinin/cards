@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.example.models.Card;
 import com.example.models.CardStatus;
-import com.example.exceptions.CardNotFoundException;
+import com.example.exceptions.EntityNotFoundException;
 import com.example.repository.CardRepository;
 
 public class CardServiceImpl implements CardService {
@@ -34,7 +34,7 @@ public class CardServiceImpl implements CardService {
         if(card.isPresent()) {
             return card.get();
         } else {
-            throw new CardNotFoundException("Card not found with id: " + id);
+            throw new EntityNotFoundException("Card not found with id: " + id);
         }
     }
 
@@ -59,7 +59,7 @@ public class CardServiceImpl implements CardService {
     public void deleteCard(Long id) {
         boolean wasDeleted = cardRepository.deleteById(id).isPresent();
         if (!wasDeleted) {
-            throw new CardNotFoundException("Card not found with id: " + id);
+            throw new EntityNotFoundException("Card not found with id: " + id);
         }
     }
 

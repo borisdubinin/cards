@@ -19,23 +19,24 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void createCard(Card card) {
-        if (card.getCardNumber() == null || card.getCardNumber().trim().isEmpty()) {
+    public Card create(Card card) {
+        if (card.getNumber() == null || card.getNumber().trim().isEmpty()) {
             throw new IllegalArgumentException("Card number is required");
         }
-        if (card.getCardHolderName() == null || card.getCardHolderName().trim().isEmpty()) {
+        if (card.getHolderName() == null || card.getHolderName().trim().isEmpty()) {
             throw new IllegalArgumentException("Card holder name is required");
         }
 
         card.setExpirationDate(YearMonth.now().plusYears(3));
         card.setStatus(CardStatus.NEW);
-        card.setCardNumber(CardNumberGenerator.generateUniqueNumber());
+        card.setNumber(CardNumberGenerator.generateUniqueNumber());
 
         cardRepository.save(card);
+        return card;
     }
 
     @Override
-    public Card getCardById(Long id) {
+    public Card getById(Long id) {
         Optional<Card> card = cardRepository.getById(id);
         if (card.isPresent()) {
             return card.get();
@@ -45,24 +46,26 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public List<Card> getAllCards() {
+    public List<Card> getAll() {
         return cardRepository.getAll();
     }
 
     @Override
-    public void updateCard(Long id, Card card) {
-        Card existingCard = getCardById(id);
+    public Card update(Long id, Card card) {
+        Card existingCard = getById(id);
 
-        existingCard.setCardNumber(card.getCardNumber());
-        existingCard.setCardHolderName(card.getCardHolderName());
-        existingCard.setExpirationDate(card.getExpirationDate());
+        existingCard.setHolderName(card.getHolderName());
         existingCard.setAccountId(card.getAccountId());
 
+        existingCard.setExpirationDate(YearMonth.now().plusYears(3));
+        existingCard.setNumber(CardNumberGenerator.generateUniqueNumber());
+
         cardRepository.save(existingCard);
+        return existingCard;
     }
 
     @Override
-    public void deleteCard(Long id) {
+    public void delete(Long id) {
         boolean wasDeleted = cardRepository.deleteById(id).isPresent();
         if (!wasDeleted) {
             throw new EntityNotFoundException("Card not found with id: " + id);
@@ -70,48 +73,36 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void blockCard(Long id) {
-        Card card = getCardById(id);
-        if (card.getStatus() == CardStatus.BLOCKED) {
-            throw new IllegalStateException("Card is already blocked");
-        }
-        card.setStatus(CardStatus.BLOCKED);
+    public Card changeStatus(Long id, CardStatus status) {
+        Card card = getById(id);
+        card.setStatus(status);
         cardRepository.save(card);
-    }
-
-    @Override
-    public void unblockCard(Long id) {
-        Card card = getCardById(id);
-        if (card.getStatus() == CardStatus.ACTIVE) {
-            throw new IllegalStateException("Card is already active");
-        }
-        card.setStatus(CardStatus.ACTIVE);
-        cardRepository.save(card);
+        return card;
     }
 
     private void initStorage() {
-        this.createCard(Card.builder()
-                .cardHolderName("IVAN PETROV")
+        this.create(Card.builder()
+                .holderName("IVAN PETROV")
                 .accountId(1001L)
                 .build());
 
-        this.createCard(Card.builder()
-                .cardHolderName("MARIA SOKOLOVA")
+        this.create(Card.builder()
+                .holderName("MARIA SOKOLOVA")
                 .accountId(1002L)
                 .build());
 
-        this.createCard(Card.builder()
-                .cardHolderName("PETR SIDOROV")
+        this.create(Card.builder()
+                .holderName("PETR SIDOROV")
                 .accountId(1003L)
                 .build());
 
-        this.createCard(Card.builder()
-                .cardHolderName("ANNA VOLKOVA")
+        this.create(Card.builder()
+                .holderName("ANNA VOLKOVA")
                 .accountId(1004L)
                 .build());
 
-        this.createCard(Card.builder()
-                .cardHolderName("ALEXEY MOROZOV")
+        this.create(Card.builder()
+                .holderName("ALEXEY MOROZOV")
                 .accountId(1005L)
                 .build());
     }

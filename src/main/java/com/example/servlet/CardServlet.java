@@ -96,12 +96,12 @@ public class CardServlet extends HttpServlet {
     private void handleGetAll(HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.getMapper().writeValue(resp.getWriter(), cardService.getAllCards());
+        JsonUtils.getMapper().writeValue(resp.getWriter(), cardService.getAll());
     }
 
     private void handleGetById(String pathInfo, HttpServletResponse resp) throws IOException {
         Long id = extractId(pathInfo);
-        Card card = cardService.getCardById(id);
+        Card card = cardService.getById(id);
 
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
@@ -110,7 +110,7 @@ public class CardServlet extends HttpServlet {
 
     private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Card card = JsonUtils.getMapper().readValue(req.getReader(), Card.class);
-        cardService.createCard(card);
+        cardService.create(card);
 
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_CREATED);
@@ -119,7 +119,7 @@ public class CardServlet extends HttpServlet {
     private void handleUpdate(String pathInfo, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Long id = extractId(pathInfo);
         Card card = JsonUtils.getMapper().readValue(req.getReader(), Card.class);
-        cardService.updateCard(id, card);
+        cardService.update(id, card);
 
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
@@ -127,7 +127,7 @@ public class CardServlet extends HttpServlet {
 
     private void handleDelete(String pathInfo, HttpServletResponse resp) {
         Long id = extractId(pathInfo);
-        cardService.deleteCard(id);
+        cardService.delete(id);
         resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 

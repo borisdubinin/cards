@@ -13,8 +13,8 @@ import lombok.Builder;
 public class Card {
 
     private Long id;
-    private String cardNumber;
-    private String cardHolderName;
+    private String number;
+    private String holderName;
     private YearMonth expirationDate;
     private CardStatus status;
     private Long accountId;

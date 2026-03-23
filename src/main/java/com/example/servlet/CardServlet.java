@@ -20,6 +20,7 @@ import com.example.model.CardStatus;
 import com.example.repository.CardRepository;
 import com.example.service.CardService;
 import com.example.service.CardServiceImpl;
+import com.example.utils.JsonUtils;
 
 @WebServlet("/cards/*")
 public class CardServlet extends HttpServlet {
@@ -144,14 +145,14 @@ public class CardServlet extends HttpServlet {
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
         List<CardResponseDto> responseData = CardConverter.toCardResponseDto(cardService.getAll());
-        JsonUtils.getMapper().writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
     private void handleGetById(Long id, HttpServletResponse resp) throws IOException {
         CardResponseDto responseData = CardConverter.toCardResponseDto(cardService.getById(id));
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.getMapper().writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
     private void handleErrorResponse(Exception e, HttpServletResponse resp) throws IOException {
@@ -172,33 +173,33 @@ public class CardServlet extends HttpServlet {
     }
 
     private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CardRequestDto requestData = JsonUtils.getMapper().readValue(req.getReader(), CardRequestDto.class);
+        CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
         Card newCard = CardConverter.toCard(requestData);
         newCard = cardService.create(newCard);
         CardResponseDto responseData = CardConverter.toCardResponseDto(newCard);
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        JsonUtils.getMapper().writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
     private void handleUpdate(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CardRequestDto requestData = JsonUtils.getMapper().readValue(req.getReader(), CardRequestDto.class);
+        CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
         Card updatedCard = CardConverter.toCard(requestData);
         updatedCard = cardService.update(id, updatedCard);
         CardResponseDto responseData = CardConverter.toCardResponseDto(updatedCard);
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.getMapper().writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
     private void handleSetStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CardRequestDto requestData = JsonUtils.getMapper().readValue(req.getReader(), CardRequestDto.class);
+        CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
         CardStatus newStatus = CardConverter.toCard(requestData).getStatus();
         Card editedCard = cardService.changeStatus(id, newStatus);
         CardResponseDto responseData = CardConverter.toCardResponseDto(editedCard);
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.getMapper().writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
     private void handleDelete(Long id, HttpServletResponse resp) {
@@ -209,7 +210,7 @@ public class CardServlet extends HttpServlet {
     private void sendError(HttpServletResponse resp, int status, String message) throws IOException {
         resp.setStatus(status);
         resp.setContentType("application/json;charset=UTF-8");
-        JsonUtils.getMapper().writeValue(resp.getWriter(), new ErrorResponse(status, message));
+        JsonUtils.writeValue(resp.getWriter(), new ErrorResponse(status, message));
     }
 
     private static class ErrorResponse {

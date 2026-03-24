@@ -1,3 +1,4 @@
 package com.example.dto;
 
-public record ErrorResponseDto(int status, String message) { }
+public record ErrorResponseDto(int status, String message) {
+}

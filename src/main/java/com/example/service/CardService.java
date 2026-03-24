@@ -24,7 +24,7 @@ public interface CardService {
     List<Card> getAll();
 
     /**
-     * @param id id of the card you need to update
+     * @param id   id of the card you need to update
      * @param card card with required field accountId and/or holderName
      * @return returns updated card
      */
@@ -36,7 +36,7 @@ public interface CardService {
     void delete(Long id);
 
     /**
-     * @param id id of the card you need to edit
+     * @param id     id of the card you need to edit
      * @param status status you want to set
      * @return returns edited card
      */

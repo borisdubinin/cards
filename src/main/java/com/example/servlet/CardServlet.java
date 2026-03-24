@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.example.converter.CardConverter;
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
+import com.example.dto.ErrorResponseDto;
 import com.example.exception.BadRequestException;
 import com.example.exception.ResourceNotFoundException;
 import com.example.model.Card;
@@ -210,17 +211,6 @@ public class CardServlet extends HttpServlet {
     private void sendError(HttpServletResponse resp, int status, String message) throws IOException {
         resp.setStatus(status);
         resp.setContentType("application/json;charset=UTF-8");
-        JsonUtils.writeValue(resp.getWriter(), new ErrorResponse(status, message));
-    }
-
-    private static class ErrorResponse {
-
-        public int status;
-        public String message;
-
-        public ErrorResponse(int status, String message) {
-            this.status = status;
-            this.message = message;
-        }
+        JsonUtils.writeValue(resp.getWriter(), new ErrorResponseDto(status, message));
     }
 }

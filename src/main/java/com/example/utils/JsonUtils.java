@@ -17,10 +17,6 @@ public class JsonUtils {
         return mapper;
     }
 
-    public static ObjectMapper getMapper() {
-        return OBJECT_MAPPER;
-    }
-
     public static <T> T readValue(Reader reader, Class<T> type) throws IOException {
         return OBJECT_MAPPER.readValue(reader, type);
     }

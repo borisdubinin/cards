@@ -9,6 +9,7 @@ public class CardRequestDto {
     @JsonProperty("holder_name")
     private String holderName;
 
+    @JsonProperty
     private String status;
 
     @JsonProperty("account_id")

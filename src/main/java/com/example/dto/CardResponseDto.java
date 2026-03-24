@@ -6,7 +6,10 @@ import lombok.Builder;
 @Builder
 public class CardResponseDto {
 
+    @JsonProperty
     private Long id;
+
+    @JsonProperty
     private String number;
 
     @JsonProperty("holder_name")
@@ -15,6 +18,7 @@ public class CardResponseDto {
     @JsonProperty("expiration_date")
     private String expirationDate;
 
+    @JsonProperty
     private String status;
 
     @JsonProperty("account_id")

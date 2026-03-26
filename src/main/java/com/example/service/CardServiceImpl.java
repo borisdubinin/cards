@@ -16,7 +16,6 @@ public class CardServiceImpl implements CardService {
 
     public CardServiceImpl(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
-        initStorage();
     }
 
     @Override
@@ -24,7 +23,7 @@ public class CardServiceImpl implements CardService {
         validateBeforeCreation(card);
 
         card.setExpirationDate(YearMonth.now().plusYears(3));
-        card.setStatus(CardStatus.NEW);
+        card.setStatus(CardStatus.ACTIVE);
         card.setNumber(CardNumberGenerator.generateUniqueNumber());
 
         cardRepository.save(card);
@@ -74,33 +73,6 @@ public class CardServiceImpl implements CardService {
         card.setStatus(status);
         cardRepository.save(card);
         return card;
-    }
-
-    private void initStorage() {
-        this.create(Card.builder()
-                .holderName("IVAN PETROV")
-                .accountId(1001L)
-                .build());
-
-        this.create(Card.builder()
-                .holderName("MARIA SOKOLOVA")
-                .accountId(1002L)
-                .build());
-
-        this.create(Card.builder()
-                .holderName("PETR SIDOROV")
-                .accountId(1003L)
-                .build());
-
-        this.create(Card.builder()
-                .holderName("ANNA VOLKOVA")
-                .accountId(1004L)
-                .build());
-
-        this.create(Card.builder()
-                .holderName("ALEXEY MOROZOV")
-                .accountId(1005L)
-                .build());
     }
 
     private void validateBeforeCreation(Card card) {

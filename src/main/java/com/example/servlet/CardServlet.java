@@ -3,7 +3,6 @@ package com.example.servlet;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +21,12 @@ import com.example.repository.CardRepository;
 import com.example.service.CardService;
 import com.example.service.CardServiceImpl;
 import com.example.utils.JsonUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @WebServlet("/cards/*")
 public class CardServlet extends HttpServlet {
 
+    private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
     private CardService cardService;
     private CardConverter converter;
 
@@ -36,20 +37,23 @@ public class CardServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        try {
+            String method = req.getMethod();
 
-        String method = req.getMethod();
-
-        if ("PATCH".equalsIgnoreCase(method)) {
-            doPatch(req, resp);
-        } else {
-            super.service(req, resp);
+            if ("PATCH".equalsIgnoreCase(method)) {
+                doPatch(req, resp);
+            } else {
+                super.service(req, resp);
+            }
+        } catch (Exception e) {
+            getServletContext().log("Request processing error", e);
+            handleErrorResponse(e, resp);
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
             String[] pathSegments = splitPathInfo(req.getPathInfo());
             if (pathSegments.length == 0) {
                 handleGetAll(resp);
@@ -59,44 +63,19 @@ public class CardServlet extends HttpServlet {
             } else {
                 throw new ResourceNotFoundException("URL not found");
             }
-        } catch (Exception e) {
-            handleErrorResponse(e, resp);
-        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
             String[] pathSegments = splitPathInfo(req.getPathInfo());
             if (pathSegments.length == 0) {
                 handleCreate(req, resp);
             } else {
                 throw new ResourceNotFoundException("URL not found");
             }
-        } catch (Exception e) {
-            handleErrorResponse(e, resp);
-        }
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
-            String[] pathSegments = splitPathInfo(req.getPathInfo());
-            if (pathSegments.length == 1) {
-                Long id = Long.parseLong(pathSegments[0]);
-                handleUpdate(id, req, resp);
-            } else if (pathSegments.length == 0) {
-                throw new BadRequestException("ID is required for update");
-            } else {
-                throw new ResourceNotFoundException("URL not found");
-            }
-        } catch (Exception e) {
-            handleErrorResponse(e, resp);
-        }
     }
 
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
             String[] pathSegments = splitPathInfo(req.getPathInfo());
             if (pathSegments.length == 2) {
                 if ("status".equals(pathSegments[1])) {
@@ -110,14 +89,10 @@ public class CardServlet extends HttpServlet {
             } else {
                 throw new ResourceNotFoundException("URL not found");
             }
-        } catch (Exception e) {
-            handleErrorResponse(e, resp);
-        }
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
             String[] pathSegments = splitPathInfo(req.getPathInfo());
             if (pathSegments.length == 1) {
                 Long id = Long.parseLong(pathSegments[0]);
@@ -127,82 +102,63 @@ public class CardServlet extends HttpServlet {
             } else {
                 throw new ResourceNotFoundException("URL not found");
             }
-        } catch (Exception e) {
-            handleErrorResponse(e, resp);
-        }
     }
 
     private String[] splitPathInfo(String pathInfo) {
-        if (pathInfo == null || pathInfo.isEmpty() || pathInfo.equals("/")) {
-            return new String[]{};
+        if (StringUtils.isBlank(pathInfo) || pathInfo.equals("/")) {
+            return new String[0];
         }
-
         String normalized = pathInfo.replaceAll("^/|/$", "");
-        if (normalized.isEmpty()) {
-            return new String[]{};
-        }
-        return normalized.split("/");
+        return normalized.isEmpty() ? new String[0] : normalized.split("/");
     }
 
     private void handleGetAll(HttpServletResponse resp) throws IOException {
-        resp.setContentType("application/json;charset=UTF-8");
+        resp.setContentType(CONTENT_TYPE);
         resp.setStatus(HttpServletResponse.SC_OK);
-        List<CardResponseDto> responseData = converter.toDto(cardService.getAll());
-        JsonUtils.writeValue(resp.getWriter(), responseData);
+        List<Card> allCards = cardService.getAll();
+        List<CardResponseDto> cardResponseDto = converter.toDto(allCards);
+        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
     }
 
-    private void handleGetById(Long id, HttpServletResponse resp) throws Exception {
-        CardResponseDto responseData = converter.toDto(cardService.getById(id));
-        resp.setContentType("application/json;charset=UTF-8");
+    private void handleGetById(Long id, HttpServletResponse resp) throws IOException {
+        CardResponseDto cardResponseDto = converter.toDto(cardService.getById(id));
+        resp.setContentType(CONTENT_TYPE);
         resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
     }
 
     private void handleErrorResponse(Exception e, HttpServletResponse resp) throws IOException {
-        int status;
         String message = e.getMessage();
-
-        if (e instanceof BadRequestException || e instanceof NumberFormatException) {
-            status = HttpServletResponse.SC_BAD_REQUEST;
-        } else if (e instanceof EntityNotFoundException || e instanceof ResourceNotFoundException) {
-            status = HttpServletResponse.SC_NOT_FOUND;
-        } else {
-            status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-            message = "Internal server error: " + message;
-            e.printStackTrace();
-        }
-
+        int status = mapExceptionToStatus(e);
         sendError(resp, status, message);
     }
 
-    private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
-        Card newCard = converter.toModel(requestData);
-        newCard = cardService.create(newCard);
-        CardResponseDto responseData = converter.toDto(newCard);
-        resp.setContentType("application/json;charset=UTF-8");
+    private static int mapExceptionToStatus(Exception e) {
+        return switch (e) {
+            case BadRequestException _, NumberFormatException _ -> HttpServletResponse.SC_BAD_REQUEST;
+            case EntityNotFoundException _, ResourceNotFoundException _ -> HttpServletResponse.SC_NOT_FOUND;
+            default -> HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        };
+    }
+
+    private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        CardRequestDto cardRequestDto = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
+        Card newCard = converter.toModel(cardRequestDto);
+        Card savedCard = cardService.create(newCard);
+        CardResponseDto cardResponseDto = converter.toDto(savedCard);
+        resp.setContentType(CONTENT_TYPE);
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        JsonUtils.writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
     }
 
-    private void handleUpdate(Long id, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
-        Card updatedCard = converter.toModel(requestData);
-        updatedCard = cardService.update(id, updatedCard);
-        CardResponseDto responseData = converter.toDto(updatedCard);
-        resp.setContentType("application/json;charset=UTF-8");
-        resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.writeValue(resp.getWriter(), responseData);
-    }
-
-    private void handleSetStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
-        CardStatus newStatus = converter.toModel(requestData).getStatus();
+    private void handleSetStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        CardRequestDto cardRequestDto = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
+        CardStatus newStatus = converter.toModel(cardRequestDto).getStatus();
         Card editedCard = cardService.changeStatus(id, newStatus);
-        CardResponseDto responseData = converter.toDto(editedCard);
-        resp.setContentType("application/json;charset=UTF-8");
+        CardResponseDto cardResponseDto = converter.toDto(editedCard);
+        resp.setContentType(CONTENT_TYPE);
         resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.writeValue(resp.getWriter(), responseData);
+        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
     }
 
     private void handleDelete(Long id, HttpServletResponse resp) {
@@ -212,7 +168,7 @@ public class CardServlet extends HttpServlet {
 
     private void sendError(HttpServletResponse resp, int status, String message) throws IOException {
         resp.setStatus(status);
-        resp.setContentType("application/json;charset=UTF-8");
+        resp.setContentType(CONTENT_TYPE);
         JsonUtils.writeValue(resp.getWriter(), new ErrorResponseDto(status, message));
     }
 }

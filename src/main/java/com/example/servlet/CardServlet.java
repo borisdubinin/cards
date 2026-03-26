@@ -2,6 +2,7 @@ package com.example.servlet;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.example.converter.CardConverter;
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
+import com.example.dto.CardStatusUpdateRequestDto;
 import com.example.dto.ErrorResponseDto;
 import com.example.exception.BadRequestException;
 import com.example.exception.ResourceNotFoundException;
@@ -54,54 +56,54 @@ public class CardServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-            String[] pathSegments = splitPathInfo(req.getPathInfo());
-            if (pathSegments.length == 0) {
-                handleGetAll(resp);
-            } else if (pathSegments.length == 1) {
-                Long id = Long.parseLong(pathSegments[0]);
-                handleGetById(id, resp);
-            } else {
-                throw new ResourceNotFoundException("URL not found");
-            }
+        String[] pathSegments = splitPathInfo(req.getPathInfo());
+        if (pathSegments.length == 0) {
+            handleGetAll(resp);
+        } else if (pathSegments.length == 1) {
+            Long id = Long.parseLong(pathSegments[0]);
+            handleGetById(id, resp);
+        } else {
+            throw new ResourceNotFoundException("URL not found");
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-            String[] pathSegments = splitPathInfo(req.getPathInfo());
-            if (pathSegments.length == 0) {
-                handleCreate(req, resp);
-            } else {
-                throw new ResourceNotFoundException("URL not found");
-            }
+        String[] pathSegments = splitPathInfo(req.getPathInfo());
+        if (pathSegments.length == 0) {
+            handleCreate(req, resp);
+        } else {
+            throw new ResourceNotFoundException("URL not found");
+        }
     }
 
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-            String[] pathSegments = splitPathInfo(req.getPathInfo());
-            if (pathSegments.length == 2) {
-                if ("status".equals(pathSegments[1])) {
-                    Long id = Long.parseLong(pathSegments[0]);
-                    handleSetStatus(id, req, resp);
-                } else {
-                    throw new ResourceNotFoundException("URL not found");
-                }
-            } else if (pathSegments.length == 0) {
-                throw new BadRequestException("ID is required for edit");
+        String[] pathSegments = splitPathInfo(req.getPathInfo());
+        if (pathSegments.length == 2) {
+            if ("status".equals(pathSegments[1])) {
+                Long id = Long.parseLong(pathSegments[0]);
+                handleChangeStatus(id, req, resp);
             } else {
                 throw new ResourceNotFoundException("URL not found");
             }
+        } else if (pathSegments.length == 0) {
+            throw new BadRequestException("ID is required for edit");
+        } else {
+            throw new ResourceNotFoundException("URL not found");
+        }
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) {
-            String[] pathSegments = splitPathInfo(req.getPathInfo());
-            if (pathSegments.length == 1) {
-                Long id = Long.parseLong(pathSegments[0]);
-                handleDelete(id, resp);
-            } else if (pathSegments.length == 0) {
-                throw new BadRequestException("ID is required for delete");
-            } else {
-                throw new ResourceNotFoundException("URL not found");
-            }
+        String[] pathSegments = splitPathInfo(req.getPathInfo());
+        if (pathSegments.length == 1) {
+            Long id = Long.parseLong(pathSegments[0]);
+            handleDelete(id, resp);
+        } else if (pathSegments.length == 0) {
+            throw new BadRequestException("ID is required for delete");
+        } else {
+            throw new ResourceNotFoundException("URL not found");
+        }
     }
 
     private String[] splitPathInfo(String pathInfo) {
@@ -113,29 +115,31 @@ public class CardServlet extends HttpServlet {
     }
 
     private void handleGetAll(HttpServletResponse resp) throws IOException {
-        resp.setContentType(CONTENT_TYPE);
-        resp.setStatus(HttpServletResponse.SC_OK);
         List<Card> allCards = cardService.getAll();
         List<CardResponseDto> cardResponseDto = converter.toDto(allCards);
-        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
+        writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 
     private void handleGetById(Long id, HttpServletResponse resp) throws IOException {
         CardResponseDto cardResponseDto = converter.toDto(cardService.getById(id));
-        resp.setContentType(CONTENT_TYPE);
-        resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
+        writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 
     private void handleErrorResponse(Exception e, HttpServletResponse resp) throws IOException {
         String message = e.getMessage();
         int status = mapExceptionToStatus(e);
-        sendError(resp, status, message);
+        sendErrorResponse(resp, status, message);
+    }
+
+    private void writeJsonResponse(HttpServletResponse resp, int status, Object dto) throws IOException {
+        resp.setContentType(CONTENT_TYPE);
+        JsonUtils.writeValue(resp.getWriter(), dto);
+        resp.setStatus(status);
     }
 
     private static int mapExceptionToStatus(Exception e) {
         return switch (e) {
-            case BadRequestException _, NumberFormatException _ -> HttpServletResponse.SC_BAD_REQUEST;
+            case BadRequestException _, IllegalArgumentException _ -> HttpServletResponse.SC_BAD_REQUEST;
             case EntityNotFoundException _, ResourceNotFoundException _ -> HttpServletResponse.SC_NOT_FOUND;
             default -> HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         };
@@ -143,22 +147,39 @@ public class CardServlet extends HttpServlet {
 
     private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         CardRequestDto cardRequestDto = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
+        validateCreateRequest(cardRequestDto);
         Card newCard = converter.toModel(cardRequestDto);
         Card savedCard = cardService.create(newCard);
         CardResponseDto cardResponseDto = converter.toDto(savedCard);
-        resp.setContentType(CONTENT_TYPE);
-        resp.setStatus(HttpServletResponse.SC_CREATED);
-        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
+        writeJsonResponse(resp, HttpServletResponse.SC_CREATED, cardResponseDto);
     }
 
-    private void handleSetStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CardRequestDto cardRequestDto = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
-        CardStatus newStatus = converter.toModel(cardRequestDto).getStatus();
+    private void validateCreateRequest(CardRequestDto dto) {
+        if (Objects.isNull(dto)) {
+            throw new BadRequestException("Data is required for create");
+        } else if (Objects.isNull(dto.getAccountId())) {
+            throw new BadRequestException("Account ID is required for create");
+        } else if (Objects.isNull(dto.getHolderName())) {
+            throw new BadRequestException(("Holder name is required for create"));
+        }
+    }
+
+    private void handleChangeStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        CardStatusUpdateRequestDto cardStatusUpdateRequestDto
+                = JsonUtils.readValue(req.getReader(), CardStatusUpdateRequestDto.class);
+        validateStatusUpdateRequest(cardStatusUpdateRequestDto);
+        CardStatus newStatus = converter.toModel(cardStatusUpdateRequestDto);
         Card editedCard = cardService.changeStatus(id, newStatus);
         CardResponseDto cardResponseDto = converter.toDto(editedCard);
-        resp.setContentType(CONTENT_TYPE);
-        resp.setStatus(HttpServletResponse.SC_OK);
-        JsonUtils.writeValue(resp.getWriter(), cardResponseDto);
+        writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
+    }
+
+    private void validateStatusUpdateRequest(CardStatusUpdateRequestDto dto) {
+        if (Objects.isNull(dto)) {
+            throw new BadRequestException("Data is required for change status");
+        } else if (Objects.isNull(dto.status())) {
+            throw new BadRequestException("Status is required for change status");
+        }
     }
 
     private void handleDelete(Long id, HttpServletResponse resp) {
@@ -166,7 +187,7 @@ public class CardServlet extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
-    private void sendError(HttpServletResponse resp, int status, String message) throws IOException {
+    private void sendErrorResponse(HttpServletResponse resp, int status, String message) throws IOException {
         resp.setStatus(status);
         resp.setContentType(CONTENT_TYPE);
         JsonUtils.writeValue(resp.getWriter(), new ErrorResponseDto(status, message));

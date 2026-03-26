@@ -39,7 +39,7 @@ public class CardServlet extends HttpServlet {
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) {
         try {
             String method = req.getMethod();
 
@@ -55,7 +55,7 @@ public class CardServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         String[] pathSegments = splitPathInfo(req.getPathInfo());
         if (pathSegments.length == 0) {
             handleGetAll(resp);
@@ -106,35 +106,10 @@ public class CardServlet extends HttpServlet {
         }
     }
 
-    private String[] splitPathInfo(String pathInfo) {
-        if (StringUtils.isBlank(pathInfo) || pathInfo.equals("/")) {
-            return new String[0];
-        }
-        String normalized = pathInfo.replaceAll("^/|/$", "");
-        return normalized.isEmpty() ? new String[0] : normalized.split("/");
-    }
-
-    private void handleGetAll(HttpServletResponse resp) throws IOException {
-        List<Card> allCards = cardService.getAll();
-        List<CardResponseDto> cardResponseDto = converter.toDto(allCards);
-        writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
-    }
-
-    private void handleGetById(Long id, HttpServletResponse resp) throws IOException {
-        CardResponseDto cardResponseDto = converter.toDto(cardService.getById(id));
-        writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
-    }
-
-    private void handleErrorResponse(Exception e, HttpServletResponse resp) throws IOException {
+    private void handleErrorResponse(Exception e, HttpServletResponse resp) {
         String message = e.getMessage();
         int status = mapExceptionToStatus(e);
         sendErrorResponse(resp, status, message);
-    }
-
-    private void writeJsonResponse(HttpServletResponse resp, int status, Object dto) throws IOException {
-        resp.setContentType(CONTENT_TYPE);
-        JsonUtils.writeValue(resp.getWriter(), dto);
-        resp.setStatus(status);
     }
 
     private static int mapExceptionToStatus(Exception e) {
@@ -143,6 +118,39 @@ public class CardServlet extends HttpServlet {
             case EntityNotFoundException _, ResourceNotFoundException _ -> HttpServletResponse.SC_NOT_FOUND;
             default -> HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         };
+    }
+
+    private void sendErrorResponse(HttpServletResponse resp, int status, String message) {
+        writeJsonResponse(resp, status, new ErrorResponseDto(status, message));
+    }
+
+    private void writeJsonResponse(HttpServletResponse resp, int status, Object dto) {
+        try {
+            resp.setContentType(CONTENT_TYPE);
+            JsonUtils.writeValue(resp.getWriter(), dto);
+            resp.setStatus(status);
+        } catch (IOException e) {
+            getServletContext().log("Error during json serialization", e);
+        }
+    }
+
+    private String[] splitPathInfo(String pathInfo) {
+        if (StringUtils.isBlank(pathInfo) || pathInfo.equals("/")) {
+            return new String[0];
+        }
+        String normalized = pathInfo.replaceAll("^/|/$", "");
+        return normalized.isEmpty() ? new String[0] : normalized.split("/");
+    }
+
+    private void handleGetAll(HttpServletResponse resp) {
+        List<Card> allCards = cardService.getAll();
+        List<CardResponseDto> cardResponseDto = converter.toDto(allCards);
+        writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
+    }
+
+    private void handleGetById(Long id, HttpServletResponse resp) {
+        CardResponseDto cardResponseDto = converter.toDto(cardService.getById(id));
+        writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 
     private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -185,11 +193,5 @@ public class CardServlet extends HttpServlet {
     private void handleDelete(Long id, HttpServletResponse resp) {
         cardService.delete(id);
         resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-    }
-
-    private void sendErrorResponse(HttpServletResponse resp, int status, String message) throws IOException {
-        resp.setStatus(status);
-        resp.setContentType(CONTENT_TYPE);
-        JsonUtils.writeValue(resp.getWriter(), new ErrorResponseDto(status, message));
     }
 }

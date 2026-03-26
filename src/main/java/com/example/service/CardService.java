@@ -9,6 +9,7 @@ public interface CardService {
 
     /**
      * creates a card linked to the accountId with the holder's name holderName
+     *
      * @param card card with required fields accountId and holderName
      * @return created card
      */
@@ -16,32 +17,29 @@ public interface CardService {
 
     /**
      * Finds the card in storage and returns it
+     *
      * @param id id of the card you need to get
      */
     Card getById(Long id);
 
     /**
      * returns all cards
+     *
      * @return list of all cards
      */
     List<Card> getAll();
 
     /**
-     * @param id   id of the card you need to update
-     * @param card card with required field accountId and/or holderName
-     * @return updated card
-     */
-    Card update(Long id, Card card);
-
-    /**
      * Delete a card from storage
+     *
      * @param id id of the card you need to delete
      */
     void delete(Long id);
 
     /**
      * Changes the card status
-     * @param id id of the card you need to edit
+     *
+     * @param id     id of the card you need to edit
      * @param status status you want to set
      * @return edited card
      */

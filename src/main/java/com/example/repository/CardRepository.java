@@ -22,14 +22,14 @@ public class CardRepository {
         initStorage();
     }
 
-    public void save(Card card) {
+    public Card save(Card card) {
         if (card.getId() == null) {
             card.setId(idGenerator.getAndIncrement());
             card.setCreatedAt(LocalDateTime.now());
         } else {
             card.setUpdatedAt(LocalDateTime.now());
         }
-        storage.put(card.getId(), card);
+        return storage.put(card.getId(), card);
     }
 
     public Optional<Card> getById(Long id) {

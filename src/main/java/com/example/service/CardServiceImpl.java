@@ -26,39 +26,18 @@ public class CardServiceImpl implements CardService {
         card.setStatus(CardStatus.ACTIVE);
         card.setNumber(CardNumberGenerator.generateUniqueNumber());
 
-        cardRepository.save(card);
-        return card;
+        return cardRepository.save(card);
     }
 
     @Override
     public Card getById(Long id) {
-        return cardRepository.getById(id).orElseThrow(
-                () -> new EntityNotFoundException("Card not found with id: " + id));
+        return cardRepository.getById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
     }
 
     @Override
     public List<Card> getAll() {
         return cardRepository.getAll();
-    }
-
-    @Override
-    public Card update(Long id, Card card) {
-        validateBeforeUpdate(card);
-
-        Card existingCard = getById(id);
-
-        if (card.getHolderName() != null) {
-            existingCard.setHolderName(card.getHolderName());
-        }
-        if (card.getAccountId() != null) {
-            existingCard.setAccountId(card.getAccountId());
-        }
-
-        existingCard.setExpirationDate(YearMonth.now().plusYears(3));
-        existingCard.setNumber(CardNumberGenerator.generateUniqueNumber());
-
-        cardRepository.save(existingCard);
-        return existingCard;
     }
 
     @Override
@@ -71,33 +50,15 @@ public class CardServiceImpl implements CardService {
     public Card changeStatus(Long id, CardStatus status) {
         Card card = getById(id);
         card.setStatus(status);
-        cardRepository.save(card);
-        return card;
+        return cardRepository.save(card);
     }
 
     private void validateBeforeCreation(Card card) {
-        checkForNull(card);
-        checkHolderNameCorrectness(card.getHolderName());
-        checkAccountIdCorrectness(card.getAccountId());
-    }
-
-    private void validateBeforeUpdate(Card card) {
-        checkForNull(card);
-        if (card.getHolderName() == null && card.getAccountId() == null) {
-            throw new IllegalArgumentException("Card holder name or account id is required");
-        }
-        if (card.getHolderName() != null) {
-            checkHolderNameCorrectness(card.getHolderName());
-        }
-        if (card.getAccountId() != null) {
-            checkAccountIdCorrectness(card.getAccountId());
-        }
-    }
-
-    private void checkForNull(Card card) {
         if (card == null) {
             throw new IllegalArgumentException("Card is required");
         }
+        checkHolderNameCorrectness(card.getHolderName());
+        checkAccountIdCorrectness(card.getAccountId());
     }
 
     private void checkHolderNameCorrectness(String holderName) {
@@ -110,7 +71,7 @@ public class CardServiceImpl implements CardService {
         if (accountId == null) {
             throw new IllegalArgumentException("Account id is required");
         }
-        boolean accountExists = true;        //потом тут будет проверка на наличие счёта
+        boolean accountExists = true;        // TODO: проверка на наличие счёта
         if (!accountExists) {
             throw new IllegalArgumentException("Account not found with id: " + accountId);
         }

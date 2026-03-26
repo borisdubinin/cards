@@ -27,10 +27,12 @@ import com.example.utils.JsonUtils;
 public class CardServlet extends HttpServlet {
 
     private CardService cardService;
+    private CardConverter converter;
 
     @Override
     public void init() {
         this.cardService = new CardServiceImpl(new CardRepository());
+        this.converter = new CardConverter();
     }
 
     @Override
@@ -145,12 +147,12 @@ public class CardServlet extends HttpServlet {
     private void handleGetAll(HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
-        List<CardResponseDto> responseData = CardConverter.toCardResponseDto(cardService.getAll());
+        List<CardResponseDto> responseData = converter.toDto(cardService.getAll());
         JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
-    private void handleGetById(Long id, HttpServletResponse resp) throws IOException {
-        CardResponseDto responseData = CardConverter.toCardResponseDto(cardService.getById(id));
+    private void handleGetById(Long id, HttpServletResponse resp) throws Exception {
+        CardResponseDto responseData = converter.toDto(cardService.getById(id));
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
         JsonUtils.writeValue(resp.getWriter(), responseData);
@@ -173,31 +175,31 @@ public class CardServlet extends HttpServlet {
         sendError(resp, status, message);
     }
 
-    private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
-        Card newCard = CardConverter.toCard(requestData);
+        Card newCard = converter.toModel(requestData);
         newCard = cardService.create(newCard);
-        CardResponseDto responseData = CardConverter.toCardResponseDto(newCard);
+        CardResponseDto responseData = converter.toDto(newCard);
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_CREATED);
         JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
-    private void handleUpdate(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void handleUpdate(Long id, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
-        Card updatedCard = CardConverter.toCard(requestData);
+        Card updatedCard = converter.toModel(requestData);
         updatedCard = cardService.update(id, updatedCard);
-        CardResponseDto responseData = CardConverter.toCardResponseDto(updatedCard);
+        CardResponseDto responseData = converter.toDto(updatedCard);
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
         JsonUtils.writeValue(resp.getWriter(), responseData);
     }
 
-    private void handleSetStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void handleSetStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws Exception {
         CardRequestDto requestData = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
-        CardStatus newStatus = CardConverter.toCard(requestData).getStatus();
+        CardStatus newStatus = converter.toModel(requestData).getStatus();
         Card editedCard = cardService.changeStatus(id, newStatus);
-        CardResponseDto responseData = CardConverter.toCardResponseDto(editedCard);
+        CardResponseDto responseData = converter.toDto(editedCard);
         resp.setContentType("application/json;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_OK);
         JsonUtils.writeValue(resp.getWriter(), responseData);

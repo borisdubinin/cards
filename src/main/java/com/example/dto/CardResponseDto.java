@@ -1,5 +1,7 @@
 package com.example.dto;
 
+import com.example.model.CardStatus;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,7 +21,7 @@ public class CardResponseDto {
     @JsonFormat(pattern = "MM/yy")
     private YearMonth expirationDate;
 
-    private String status;
+    private CardStatus status;
     private Long accountId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

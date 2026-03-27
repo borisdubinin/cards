@@ -22,6 +22,7 @@ public class CardConverter {
                 .number(card.getNumber())
                 .holderName(card.getHolderName())
                 .expirationDate(card.getExpirationDate())
+                .status(card.getStatus())
                 .accountId(card.getAccountId())
                 .createdAt(card.getCreatedAt())
                 .updatedAt(card.getUpdatedAt())

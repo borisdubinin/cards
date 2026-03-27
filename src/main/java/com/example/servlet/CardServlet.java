@@ -3,6 +3,8 @@ package com.example.servlet;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,11 +33,13 @@ public class CardServlet extends HttpServlet {
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
     private CardService cardService;
     private CardConverter converter;
+    private Logger logger;
 
     @Override
     public void init() {
         this.cardService = new CardServiceImpl(new CardRepository());
         this.converter = new CardConverter();
+        this.logger = Logger.getLogger(CardServlet.class.getName());
     }
 
     @Override
@@ -49,7 +53,7 @@ public class CardServlet extends HttpServlet {
                 super.service(req, resp);
             }
         } catch (Exception e) {
-            getServletContext().log("Request processing error", e);
+            logger.log(Level.WARNING, "Request processing error: %s".formatted(e.getMessage()));
             handleErrorResponse(e, resp);
         }
     }
@@ -130,7 +134,7 @@ public class CardServlet extends HttpServlet {
             JsonUtils.writeValue(resp.getWriter(), dto);
             resp.setStatus(status);
         } catch (IOException e) {
-            getServletContext().log("Error during json serialization", e);
+            logger.log(Level.SEVERE, "Error during json serialization: %s", e.getMessage());
         }
     }
 

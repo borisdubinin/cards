@@ -2,9 +2,7 @@ package com.example.converter;
 
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
-import com.example.dto.CardStatusUpdateRequestDto;
 import com.example.model.Card;
-import com.example.model.CardStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;

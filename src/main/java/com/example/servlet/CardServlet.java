@@ -53,7 +53,7 @@ public class CardServlet extends HttpServlet {
                 super.service(req, resp);
             }
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Request processing error: %s".formatted(e.getMessage()));
+            logger.log(Level.SEVERE, "Request processing error: %s".formatted(e.getMessage()));
             handleErrorResponse(e, resp);
         }
     }

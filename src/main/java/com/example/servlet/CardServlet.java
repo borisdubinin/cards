@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.example.converter.CardConverter;
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
-import com.example.dto.CardStatusUpdateRequestDto;
+import com.example.dto.CardChangeStatusRequestDto;
 import com.example.dto.ErrorResponseDto;
 import com.example.exception.BadRequestException;
 import com.example.exception.ResourceNotFoundException;
@@ -32,13 +32,13 @@ public class CardServlet extends HttpServlet {
 
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
     private CardService cardService;
-    private CardConverter converter;
+    private CardConverter cardConverter;
     private Logger logger;
 
     @Override
     public void init() {
         this.cardService = new CardServiceImpl(new CardRepository());
-        this.converter = new CardConverter();
+        this.cardConverter = new CardConverter();
         this.logger = Logger.getLogger(CardServlet.class.getName());
     }
 
@@ -116,7 +116,7 @@ public class CardServlet extends HttpServlet {
         sendErrorResponse(resp, status, message);
     }
 
-    private static int mapExceptionToStatus(Exception e) {
+    private int mapExceptionToStatus(Exception e) {
         return switch (e) {
             case BadRequestException _, IllegalArgumentException _ -> HttpServletResponse.SC_BAD_REQUEST;
             case EntityNotFoundException _, ResourceNotFoundException _ -> HttpServletResponse.SC_NOT_FOUND;
@@ -148,21 +148,22 @@ public class CardServlet extends HttpServlet {
 
     private void handleGetAll(HttpServletResponse resp) {
         List<Card> allCards = cardService.getAll();
-        List<CardResponseDto> cardResponseDto = converter.toDtos(allCards);
+        List<CardResponseDto> cardResponseDto = cardConverter.toDtos(allCards);
         writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 
     private void handleGetById(Long id, HttpServletResponse resp) {
-        CardResponseDto cardResponseDto = converter.toDto(cardService.getById(id));
+        Card card = cardService.getById(id);
+        CardResponseDto cardResponseDto = cardConverter.toDto(card);
         writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 
     private void handleCreate(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         CardRequestDto cardRequestDto = JsonUtils.readValue(req.getReader(), CardRequestDto.class);
         validateCreateRequest(cardRequestDto);
-        Card newCard = converter.toModel(cardRequestDto);
+        Card newCard = cardConverter.toModel(cardRequestDto);
         Card savedCard = cardService.create(newCard);
-        CardResponseDto cardResponseDto = converter.toDto(savedCard);
+        CardResponseDto cardResponseDto = cardConverter.toDto(savedCard);
         writeJsonResponse(resp, HttpServletResponse.SC_CREATED, cardResponseDto);
     }
 
@@ -171,22 +172,22 @@ public class CardServlet extends HttpServlet {
             throw new BadRequestException("Data is required for create");
         } else if (Objects.isNull(dto.getAccountId())) {
             throw new BadRequestException("Account ID is required for create");
-        } else if (Objects.isNull(dto.getHolderName())) {
+        } else if (StringUtils.isBlank(dto.getHolderName())) {
             throw new BadRequestException(("Holder name is required for create"));
         }
     }
 
     private void handleChangeStatus(Long id, HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CardStatusUpdateRequestDto cardStatusUpdateRequestDto
-                = JsonUtils.readValue(req.getReader(), CardStatusUpdateRequestDto.class);
-        validateStatusUpdateRequest(cardStatusUpdateRequestDto);
-        CardStatus newStatus = cardStatusUpdateRequestDto.status();
+        CardChangeStatusRequestDto cardChangeStatusRequestDto
+                = JsonUtils.readValue(req.getReader(), CardChangeStatusRequestDto.class);
+        validateChangeStatusRequest(cardChangeStatusRequestDto);
+        CardStatus newStatus = cardChangeStatusRequestDto.status();
         Card editedCard = cardService.changeStatus(id, newStatus);
-        CardResponseDto cardResponseDto = converter.toDto(editedCard);
+        CardResponseDto cardResponseDto = cardConverter.toDto(editedCard);
         writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 
-    private void validateStatusUpdateRequest(CardStatusUpdateRequestDto dto) {
+    private void validateChangeStatusRequest(CardChangeStatusRequestDto dto) {
         if (Objects.isNull(dto)) {
             throw new BadRequestException("Data is required for change status");
         } else if (Objects.isNull(dto.status())) {

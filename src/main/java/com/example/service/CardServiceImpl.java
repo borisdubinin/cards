@@ -42,8 +42,8 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void delete(Long id) {
-        cardRepository.deleteById(id).orElseThrow(
-                () -> new EntityNotFoundException("Card not found with id: " + id));
+        cardRepository.deleteById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
     }
 
     @Override
@@ -73,7 +73,7 @@ public class CardServiceImpl implements CardService {
         }
         boolean accountExists = true;        // TODO: проверка на наличие счёта
         if (!accountExists) {
-            throw new IllegalArgumentException("Account not found with id: " + accountId);
+            throw new IllegalArgumentException("Account not found with id: %d".formatted(accountId));
         }
     }
 }

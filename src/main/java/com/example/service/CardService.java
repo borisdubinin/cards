@@ -8,7 +8,7 @@ import com.example.model.CardStatus;
 public interface CardService {
 
     /**
-     * creates a card linked to the accountId with the holder's name holderName
+     * Creates a card linked to the accountId with the holder's name
      *
      * @param card card with required fields accountId and holderName
      * @return created card
@@ -23,7 +23,7 @@ public interface CardService {
     Card getById(Long id);
 
     /**
-     * returns all cards
+     * Returns all cards
      *
      * @return list of all cards
      */

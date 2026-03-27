@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CardConverter {
-
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+    
     public Card toModel(CardRequestDto requestDto) {
         return Card.builder()
                 .holderName(requestDto.getHolderName())
@@ -30,10 +28,10 @@ public class CardConverter {
                 .id(card.getId())
                 .number(card.getNumber())
                 .holderName(card.getHolderName())
-                .expirationDate(card.getExpirationDate().toString())
+                .expirationDate(card.getExpirationDate())
                 .accountId(card.getAccountId())
-                .createdAt(card.getCreatedAt().format(FORMATTER))
-                .updatedAt(card.getUpdatedAt().format(FORMATTER))
+                .createdAt(card.getCreatedAt())
+                .updatedAt(card.getUpdatedAt())
                 .build();
     }
 

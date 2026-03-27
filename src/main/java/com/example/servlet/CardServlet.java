@@ -176,7 +176,7 @@ public class CardServlet extends HttpServlet {
         CardStatusUpdateRequestDto cardStatusUpdateRequestDto
                 = JsonUtils.readValue(req.getReader(), CardStatusUpdateRequestDto.class);
         validateStatusUpdateRequest(cardStatusUpdateRequestDto);
-        CardStatus newStatus = converter.toModel(cardStatusUpdateRequestDto);
+        CardStatus newStatus = cardStatusUpdateRequestDto.status();
         Card editedCard = cardService.changeStatus(id, newStatus);
         CardResponseDto cardResponseDto = converter.toDto(editedCard);
         writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);

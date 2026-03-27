@@ -18,10 +18,6 @@ public class CardConverter {
                 .build();
     }
 
-    public CardStatus toModel(CardStatusUpdateRequestDto requestDto) {
-        return CardStatus.valueOf(requestDto.status());
-    }
-
     public CardResponseDto toDto(Card card) {
         return CardResponseDto.builder()
                 .id(card.getId())

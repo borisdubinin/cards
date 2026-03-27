@@ -1,4 +1,6 @@
 package com.example.dto;
 
-public record CardStatusUpdateRequestDto(String status) {
+import com.example.model.CardStatus;
+
+public record CardStatusUpdateRequestDto(CardStatus status) {
 }

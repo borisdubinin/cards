@@ -85,5 +85,4 @@ public class CardRepository {
                 .accountId(1005L)
                 .build());
     }
-
 }

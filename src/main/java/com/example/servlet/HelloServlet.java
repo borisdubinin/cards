@@ -15,8 +15,6 @@ public class HelloServlet extends HttpServlet {
         response.setContentType("text/plain;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         PrintWriter out = response.getWriter();
-        int a = 5;
-        a = 5 + 5;
         out.print("Привет");
         out.close();
     }

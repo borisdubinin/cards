@@ -6,7 +6,6 @@ import com.example.dto.CardStatusUpdateRequestDto;
 import com.example.model.Card;
 import com.example.model.CardStatus;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class CardConverter {
                 .build();
     }
 
-    public List<CardResponseDto> toDto(List<Card> cards) {
+    public List<CardResponseDto> toDtos(List<Card> cards) {
         return cards.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());

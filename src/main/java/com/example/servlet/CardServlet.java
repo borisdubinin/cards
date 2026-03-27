@@ -144,7 +144,7 @@ public class CardServlet extends HttpServlet {
 
     private void handleGetAll(HttpServletResponse resp) {
         List<Card> allCards = cardService.getAll();
-        List<CardResponseDto> cardResponseDto = converter.toDto(allCards);
+        List<CardResponseDto> cardResponseDto = converter.toDtos(allCards);
         writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 

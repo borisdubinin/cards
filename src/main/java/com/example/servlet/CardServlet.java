@@ -21,7 +21,7 @@ import com.example.exception.ResourceNotFoundException;
 import com.example.model.Card;
 import com.example.exception.EntityNotFoundException;
 import com.example.model.CardStatus;
-import com.example.repository.MapCardRepository;
+import com.example.repository.DataBaseCardRepository;
 import com.example.service.CardService;
 import com.example.service.CardServiceImpl;
 import com.example.utils.JsonUtils;
@@ -37,7 +37,7 @@ public class CardServlet extends HttpServlet {
 
     @Override
     public void init() {
-        this.cardService = new CardServiceImpl(new MapCardRepository());
+        this.cardService = new CardServiceImpl(new DataBaseCardRepository());
         this.cardConverter = new CardConverter();
         this.logger = Logger.getLogger(CardServlet.class.getName());
     }

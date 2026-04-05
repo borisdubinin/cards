@@ -1,5 +1,7 @@
 package com.example.repository;
 
+import com.example.exception.DataConstraintViolationException;
+import com.example.exception.DataSourceConnectionException;
 import com.example.model.Card;
 import com.example.model.CardData;
 import com.example.model.CardStatus;
@@ -49,7 +51,8 @@ public class DataBaseCardRepository implements CardRepository {
             return parseResultSet(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throwInformativeException(e);
+            return null;
         }
     }
 
@@ -84,7 +87,8 @@ public class DataBaseCardRepository implements CardRepository {
                 return null;
             }
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throwInformativeException(e);
+            return null;
         }
     }
 
@@ -109,7 +113,8 @@ public class DataBaseCardRepository implements CardRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throwInformativeException(e);
+            return null;
         }
     }
 
@@ -133,7 +138,8 @@ public class DataBaseCardRepository implements CardRepository {
             return cards;
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throwInformativeException(e);
+            return null;
         }
     }
 
@@ -159,8 +165,13 @@ public class DataBaseCardRepository implements CardRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throwInformativeException(e);
+            return null;
         }
+    }
+
+    private Connection getConnection() throws SQLException {
+        return DatabaseConfig.getDataSource().getConnection();
     }
 
     private Card parseResultSet(ResultSet rs) throws SQLException {
@@ -178,7 +189,11 @@ public class DataBaseCardRepository implements CardRepository {
         return card;
     }
 
-    private Connection getConnection() throws SQLException {
-        return DatabaseConfig.getDataSource().getConnection();
+    private static void throwInformativeException(SQLException e) {
+        switch(e.getSQLState().substring(0,1)) {
+            case "08" -> throw new DataSourceConnectionException(e.getMessage(), e);
+            case "23" -> throw new DataConstraintViolationException(e.getMessage(), e);
+            default -> throw new RuntimeException(e.getMessage());
+        }
     }
 }

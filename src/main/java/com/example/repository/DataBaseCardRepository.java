@@ -2,9 +2,16 @@ package com.example.repository;
 
 import com.example.model.Card;
 import com.example.model.CardStatus;
-import org.flywaydb.core.Flyway;
 
-import java.sql.*;
+import org.flywaydb.core.Flyway;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +23,19 @@ public class DataBaseCardRepository implements CardRepository {
     private static final String DB_USER = "postgres";
     private static final String DB_PASSWORD = "postgres";
 
+    private static final HikariDataSource dataSource;
+
     static {
+        HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.postgresql.Driver");
+        config.setJdbcUrl(DB_URL);
+        config.setUsername(DB_USER);
+        config.setPassword(DB_PASSWORD);
+
+        dataSource = new HikariDataSource(config);
+
         Flyway flyway = Flyway.configure()
-                .dataSource(DB_URL, DB_USER, DB_PASSWORD)
+                .dataSource(dataSource)
                 .load();
 
         flyway.migrate();
@@ -52,7 +69,7 @@ public class DataBaseCardRepository implements CardRepository {
                         VALUES (?, ?, ?, ?, ?)
                         RETURNING id, createdAt
                 """;
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
             query.setString(1, card.getNumber());
             query.setString(2, card.getHolderName());
@@ -77,7 +94,7 @@ public class DataBaseCardRepository implements CardRepository {
                 WHERE id = ?
                 RETURNING id, createdAt, updatedAt
                 """;
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
             query.setString(1, card.getNumber());
             query.setString(2, card.getHolderName());
@@ -102,7 +119,7 @@ public class DataBaseCardRepository implements CardRepository {
                 FROM cards
                 WHERE id = ?
                 """;
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
             query.setLong(1, id);
             ResultSet rs = query.executeQuery();
@@ -132,7 +149,7 @@ public class DataBaseCardRepository implements CardRepository {
                 SELECT *
                 FROM cards
                 """;
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
             ResultSet rs = query.executeQuery();
             List<Card> cards = new ArrayList<>();
@@ -163,8 +180,9 @@ public class DataBaseCardRepository implements CardRepository {
                 DELETE
                 FROM cards
                 WHERE id = ?
+                RETURNING id, number, holdername, expirationdate, status, accountid, createdat, updatedat
                 """;
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
             query.setLong(1, id);
             ResultSet rs = query.executeQuery();
@@ -187,5 +205,9 @@ public class DataBaseCardRepository implements CardRepository {
 
         }
         return Optional.empty();
+    }
+
+    private Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 }

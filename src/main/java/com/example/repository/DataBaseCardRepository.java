@@ -1,6 +1,7 @@
 package com.example.repository;
 
 import com.example.model.Card;
+import com.example.model.CardData;
 import com.example.model.CardStatus;
 
 import org.flywaydb.core.Flyway;
@@ -42,169 +43,155 @@ public class DataBaseCardRepository implements CardRepository {
     }
 
     @Override
-    public Card save(Card card) {
-        return card.getId() == null
-                ? insert(card)
-                : update(card);
+    public Card insert(CardData cardData) {
+        String sql = """
+                INSERT INTO cards (number, holderName, expirationDate, status, accountId)
+                        VALUES (?, ?, ?, ?, ?)
+                        RETURNING id, number, holderName, expirationDate, status, accountId, createdAt, updatedAt
+                """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement query = conn.prepareStatement(sql)) {
+
+            query.setString(1, cardData.getNumber());
+            query.setString(2, cardData.getHolderName());
+            query.setString(3, cardData.getExpirationDate().toString());
+            query.setString(4, cardData.getStatus().name());
+            query.setLong(5, cardData.getAccountId());
+
+            ResultSet rs = query.executeQuery();
+            rs.next();
+
+            return parseResultSet(rs);
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
     }
 
     @Override
-    public Optional<Card> getById(Long id) {
-        return select(id);
+    public Card update(Long id, CardData cardData) {
+        String sql = """
+                UPDATE cards SET
+                    number = COALESCE(?, number),
+                    holderName = COALESCE(?, holderName),
+                    expirationDate = COALESCE(?, expirationDate),
+                    status = COALESCE(?, status),
+                    accountId = COALESCE(?, accountId),
+                    updatedAt = CURRENT_TIMESTAMP
+                WHERE id = ?
+                RETURNING id, number, holderName, expirationDate, status, accountId, createdAt, updatedAt
+                """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement query = conn.prepareStatement(sql)) {
+
+            query.setString(1, cardData.getNumber());
+            query.setString(2, cardData.getHolderName());
+            query.setString(3, cardData.getExpirationDate().toString());
+            query.setString(4, cardData.getStatus().name());
+            query.setLong(5, cardData.getAccountId());
+            query.setLong(6, id);
+
+            ResultSet rs = query.executeQuery();
+            if (rs.next()) {
+                return parseResultSet(rs);
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Optional<Card> get(Long id) {
+        String sql = """
+                SELECT *
+                FROM cards
+                WHERE id = ?
+                """;
+
+        try (Connection conn = getConnection();
+             PreparedStatement query = conn.prepareStatement(sql)) {
+
+            query.setLong(1, id);
+            ResultSet rs = query.executeQuery();
+
+            if (rs.next()) {
+                Card card = parseResultSet(rs);
+                return Optional.of(card);
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
     }
 
     @Override
     public List<Card> getAll() {
-        return select();
-    }
-
-    @Override
-    public Optional<Card> deleteById(Long id) {
-        return delete(id);
-    }
-
-    private Card insert(Card card) {
-        String sql = """
-                INSERT INTO cards (number, holderName, expirationDate, status, accountId)
-                        VALUES (?, ?, ?, ?, ?)
-                        RETURNING id, createdAt
-                """;
-        try (Connection conn = getConnection();
-             PreparedStatement query = conn.prepareStatement(sql)) {
-            query.setString(1, card.getNumber());
-            query.setString(2, card.getHolderName());
-            query.setString(3, card.getExpirationDate().toString());
-            query.setString(4, card.getStatus().name());
-            query.setLong(5, card.getAccountId());
-            ResultSet rs = query.executeQuery();
-            if (rs.next()) {
-                card.setId(rs.getLong("id"));
-                card.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
-            }
-        } catch (SQLException e) {
-            Exception en = e;
-        }
-        return card;
-    }
-
-    private Card update(Card card) {
-        String sql = """
-                UPDATE cards
-                SET number = ?, holderName = ?, expirationDate = ?, status = ?, accountId = ?, updatedAt = CURRENT_TIMESTAMP
-                WHERE id = ?
-                RETURNING id, createdAt, updatedAt
-                """;
-        try (Connection conn = getConnection();
-             PreparedStatement query = conn.prepareStatement(sql)) {
-            query.setString(1, card.getNumber());
-            query.setString(2, card.getHolderName());
-            query.setString(3, card.getExpirationDate().toString());
-            query.setString(4, card.getStatus().name());
-            query.setLong(5, card.getAccountId());
-            query.setLong(6, card.getId());
-            ResultSet rs = query.executeQuery();
-            if (rs.next()) {
-                card.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
-                card.setUpdatedAt(rs.getTimestamp("updatedAt").toLocalDateTime());
-            }
-        } catch (SQLException e) {
-
-        }
-        return card;
-    }
-
-    private Optional<Card> select(Long id) {
-        String sql = """
-                SELECT *
-                FROM cards
-                WHERE id = ?
-                """;
-        try (Connection conn = getConnection();
-             PreparedStatement query = conn.prepareStatement(sql)) {
-            query.setLong(1, id);
-            ResultSet rs = query.executeQuery();
-            if (rs.next()) {
-                Card card = Card.builder()
-                        .id(rs.getLong("id"))
-                        .number(rs.getString("number"))
-                        .holderName(rs.getString("holderName"))
-                        .expirationDate(YearMonth.parse(rs.getString("expirationDate")))
-                        .status(CardStatus.valueOf(rs.getString("status")))
-                        .accountId(rs.getLong("accountId"))
-                        .createdAt(rs.getTimestamp("createdAt").toLocalDateTime())
-                        .updatedAt(Optional.ofNullable(rs.getTimestamp("updatedAt"))
-                                .map(Timestamp::toLocalDateTime)
-                                .orElse(null))
-                        .build();
-                return Optional.of(card);
-            }
-        } catch (SQLException _) {
-
-        }
-        return Optional.empty();
-    }
-
-    private List<Card> select() {
         String sql = """
                 SELECT *
                 FROM cards
                 """;
+
         try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
+
             ResultSet rs = query.executeQuery();
             List<Card> cards = new ArrayList<>();
+
             while (rs.next()) {
-                Card card = Card.builder()
-                        .id(rs.getLong("id"))
-                        .number(rs.getString("number"))
-                        .holderName(rs.getString("holderName"))
-                        .expirationDate(YearMonth.parse(rs.getString("expirationDate")))
-                        .status(CardStatus.valueOf(rs.getString("status")))
-                        .accountId(rs.getLong("accountId"))
-                        .createdAt(rs.getTimestamp("createdAt").toLocalDateTime())
-                        .updatedAt(Optional.ofNullable(rs.getTimestamp("updatedAt"))
-                                .map(Timestamp::toLocalDateTime)
-                                .orElse(null))
-                        .build();
+                Card card = parseResultSet(rs);
                 cards.add(card);
             }
             return cards;
+
         } catch (SQLException e) {
-            Exception en = e;
+            throw new RuntimeException();
         }
-        return List.of();
     }
 
-    private Optional<Card> delete(Long id) {
+    @Override
+    public Optional<Card> delete(Long id) {
         String sql = """
                 DELETE
                 FROM cards
                 WHERE id = ?
-                RETURNING id, number, holdername, expirationdate, status, accountid, createdat, updatedat
+                RETURNING id, number, holderName, expirationDate, status, accountId, createdAt, updatedAt
                 """;
+
         try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
+
             query.setLong(1, id);
             ResultSet rs = query.executeQuery();
-            if (rs.next()) {
-                Card card = Card.builder()
-                        .id(rs.getLong("id"))
-                        .number(rs.getString("number"))
-                        .holderName(rs.getString("holderName"))
-                        .expirationDate(YearMonth.parse(rs.getString("expirationDate")))
-                        .status(CardStatus.valueOf(rs.getString("status")))
-                        .accountId(rs.getLong("accountId"))
-                        .createdAt(rs.getTimestamp("createdAt").toLocalDateTime())
-                        .updatedAt(Optional.ofNullable(rs.getTimestamp("updatedAt"))
-                                .map(Timestamp::toLocalDateTime)
-                                .orElse(null))
-                        .build();
-                return Optional.of(card);
-            }
-        } catch (SQLException _) {
 
+            if (rs.next()) {
+                Card card = parseResultSet(rs);
+                return Optional.of(card);
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
         }
-        return Optional.empty();
+    }
+
+    private Card parseResultSet(ResultSet rs) throws SQLException {
+        Card card = Card.builder().build();
+        card.setId(rs.getLong("id"));
+        card.setNumber(rs.getString("number"));
+        card.setHolderName(rs.getString("holderName"));
+        card.setExpirationDate(YearMonth.parse(rs.getString("expirationDate")));
+        card.setStatus(CardStatus.valueOf(rs.getString("status")));
+        card.setAccountId(rs.getLong("accountId"));
+        card.setCreatedAt(rs.getTimestamp("createdAt").toLocalDateTime());
+        card.setUpdatedAt(Optional.ofNullable(rs.getTimestamp("updatedAt"))
+                .map(Timestamp::toLocalDateTime)
+                .orElse(null));
+        return card;
     }
 
     private Connection getConnection() throws SQLException {

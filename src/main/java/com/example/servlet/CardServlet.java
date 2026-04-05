@@ -153,7 +153,7 @@ public class CardServlet extends HttpServlet {
     }
 
     private void handleGetById(Long id, HttpServletResponse resp) {
-        Card card = cardService.getById(id);
+        Card card = cardService.get(id);
         CardResponseDto cardResponseDto = cardConverter.toDto(card);
         writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }

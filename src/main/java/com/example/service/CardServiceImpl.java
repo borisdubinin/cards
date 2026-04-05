@@ -3,6 +3,7 @@ package com.example.service;
 import java.util.List;
 import java.time.YearMonth;
 
+import com.example.model.CardData;
 import com.example.repository.CardRepository;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,12 +27,12 @@ public class CardServiceImpl implements CardService {
         card.setStatus(CardStatus.ACTIVE);
         card.setNumber(CardNumberGenerator.generateUniqueNumber());
 
-        return cardRepository.save(card);
+        return cardRepository.insert(card);
     }
 
     @Override
-    public Card getById(Long id) {
-        return cardRepository.getById(id)
+    public Card get(Long id) {
+        return cardRepository.get(id)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
     }
 
@@ -42,15 +43,16 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public void delete(Long id) {
-        cardRepository.deleteById(id)
+        cardRepository.delete(id)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
     }
 
     @Override
     public Card changeStatus(Long id, CardStatus status) {
-        Card card = getById(id);
-        card.setStatus(status);
-        return cardRepository.save(card);
+        CardData cardData = CardData.builder()
+                .status(status)
+                .build();
+        return cardRepository.update(id, cardData);
     }
 
     private void validateBeforeCreation(Card card) {

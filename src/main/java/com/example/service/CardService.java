@@ -20,7 +20,7 @@ public interface CardService {
      *
      * @param id id of the card you need to get
      */
-    Card getById(Long id);
+    Card get(Long id);
 
     /**
      * Returns all cards

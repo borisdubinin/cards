@@ -5,8 +5,6 @@ import com.example.model.CardData;
 import com.example.model.CardStatus;
 
 import org.flywaydb.core.Flyway;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,23 +18,9 @@ import java.util.Optional;
 
 public class DataBaseCardRepository implements CardRepository {
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/cardsdb";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "postgres";
-
-    private static final HikariDataSource dataSource;
-
     static {
-        HikariConfig config = new HikariConfig();
-        config.setDriverClassName("org.postgresql.Driver");
-        config.setJdbcUrl(DB_URL);
-        config.setUsername(DB_USER);
-        config.setPassword(DB_PASSWORD);
-
-        dataSource = new HikariDataSource(config);
-
         Flyway flyway = Flyway.configure()
-                .dataSource(dataSource)
+                .dataSource(DatabaseConfig.getDataSource())
                 .load();
 
         flyway.migrate();
@@ -195,6 +179,6 @@ public class DataBaseCardRepository implements CardRepository {
     }
 
     private Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+        return DatabaseConfig.getDataSource().getConnection();
     }
 }

@@ -26,7 +26,7 @@ public class MapCardRepository implements CardRepository {
 
     @Override
     public Card insert(CardData cardData) {
-        Card card = Card.builder().build();
+        Card card = new Card();
         card.setId(idGenerator.getAndIncrement());
         card.setNumber(cardData.getNumber());
         card.setHolderName(cardData.getHolderName());
@@ -66,7 +66,7 @@ public class MapCardRepository implements CardRepository {
     }
 
     private void initStorage() {
-        Card card1 = Card.builder().build();
+        Card card1 = new Card();
         card1.setExpirationDate(YearMonth.of(2027, 12));
         card1.setStatus(CardStatus.ACTIVE);
         card1.setNumber(CardNumberGenerator.generateUniqueNumber());
@@ -74,7 +74,7 @@ public class MapCardRepository implements CardRepository {
         card1.setAccountId(1001L);
         insert(card1);
 
-        Card card2 = Card.builder().build();
+        Card card2 = new Card();
         card2.setExpirationDate(YearMonth.of(2028, 9));
         card2.setStatus(CardStatus.BLOCKED);
         card2.setNumber(CardNumberGenerator.generateUniqueNumber());
@@ -82,7 +82,7 @@ public class MapCardRepository implements CardRepository {
         card2.setAccountId(1002L);
         insert(card2);
 
-        Card card3 = Card.builder().build();
+        Card card3 = new Card();
         card3.setExpirationDate(YearMonth.of(2026, 5));
         card3.setStatus(CardStatus.ACTIVE);
         card3.setNumber(CardNumberGenerator.generateUniqueNumber());
@@ -90,7 +90,7 @@ public class MapCardRepository implements CardRepository {
         card3.setAccountId(1003L);
         insert(card3);
 
-        Card card4 = Card.builder().build();
+        Card card4 = new Card();
         card4.setExpirationDate(YearMonth.of(2026, 9));
         card4.setStatus(CardStatus.BLOCKED);
         card4.setNumber(CardNumberGenerator.generateUniqueNumber());
@@ -98,7 +98,7 @@ public class MapCardRepository implements CardRepository {
         card4.setAccountId(1004L);
         insert(card4);
 
-        Card card5 = Card.builder().build();
+        Card card5 = new Card();
         card5.setExpirationDate(YearMonth.of(2028, 2));
         card5.setStatus(CardStatus.ACTIVE);
         card5.setNumber(CardNumberGenerator.generateUniqueNumber());

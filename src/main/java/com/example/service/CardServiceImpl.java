@@ -49,9 +49,8 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card changeStatus(Long id, CardStatus status) {
-        CardData cardData = CardData.builder()
-                .status(status)
-                .build();
+        CardData cardData = new CardData();
+        cardData.setStatus(status);
         return cardRepository.update(id, cardData);
     }
 

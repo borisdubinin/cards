@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +42,9 @@ public class DataBaseCardRepository implements CardRepository {
 
             query.setString(1, cardData.getNumber());
             query.setString(2, cardData.getHolderName());
-            query.setString(3, cardData.getExpirationDate().toString());
-            query.setString(4, cardData.getStatus().name());
-            query.setLong(5, cardData.getAccountId());
+            query.setString(3, cardData.getExpirationDate() == null ? null : cardData.getExpirationDate().toString());
+            query.setString(4, cardData.getStatus() == null ? null : cardData.getStatus().toString());
+            query.setObject(5, cardData.getAccountId(), Types.BIGINT);
 
             ResultSet rs = query.executeQuery();
             rs.next();
@@ -75,9 +76,9 @@ public class DataBaseCardRepository implements CardRepository {
 
             query.setString(1, cardData.getNumber());
             query.setString(2, cardData.getHolderName());
-            query.setString(3, cardData.getExpirationDate().toString());
-            query.setString(4, cardData.getStatus().name());
-            query.setLong(5, cardData.getAccountId());
+            query.setString(3, cardData.getExpirationDate() == null ? null : cardData.getExpirationDate().toString());
+            query.setString(4, cardData.getStatus() == null ? null : cardData.getStatus().toString());
+            query.setObject(5, cardData.getAccountId(), Types.BIGINT);
             query.setLong(6, id);
 
             ResultSet rs = query.executeQuery();
@@ -175,7 +176,7 @@ public class DataBaseCardRepository implements CardRepository {
     }
 
     private Card parseResultSet(ResultSet rs) throws SQLException {
-        Card card = Card.builder().build();
+        Card card = new Card();
         card.setId(rs.getLong("id"));
         card.setNumber(rs.getString("number"));
         card.setHolderName(rs.getString("holderName"));

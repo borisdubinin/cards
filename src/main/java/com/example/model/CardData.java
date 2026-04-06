@@ -1,6 +1,5 @@
 package com.example.model;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +7,6 @@ import java.time.YearMonth;
 
 @Getter
 @Setter
-@Builder
 public class CardData {
 
     private String number;

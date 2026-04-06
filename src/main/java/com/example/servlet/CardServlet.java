@@ -131,8 +131,8 @@ public class CardServlet extends HttpServlet {
     private void writeJsonResponse(HttpServletResponse resp, int status, Object dto) {
         try {
             resp.setContentType(CONTENT_TYPE);
-            JsonUtils.writeValue(resp.getWriter(), dto);
             resp.setStatus(status);
+            JsonUtils.writeValue(resp.getWriter(), dto);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error during json serialization: %s", e.getMessage());
         }

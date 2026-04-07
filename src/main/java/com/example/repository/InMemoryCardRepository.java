@@ -14,12 +14,12 @@ import com.example.model.Card;
 import com.example.model.CardStatus;
 import com.example.service.CardNumberGenerator;
 
-public class MapCardRepository implements CardRepository {
+public class InMemoryCardRepository implements CardRepository {
 
     private final Map<Long, Card> storage = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
 
-    public MapCardRepository() {
+    public InMemoryCardRepository() {
         initStorage();
     }
 

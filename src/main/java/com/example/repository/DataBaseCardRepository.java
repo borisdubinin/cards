@@ -1,5 +1,6 @@
 package com.example.repository;
 
+import com.example.config.DatabaseConfig;
 import com.example.exception.RepositoryOperationException;
 import com.example.model.Card;
 import com.example.model.CardStatus;

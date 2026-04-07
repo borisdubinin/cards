@@ -1,6 +1,6 @@
 package com.example.servlet;
 
-import com.example.repository.DatabaseConfig;
+import com.example.config.DatabaseConfig;
 import org.flywaydb.core.Flyway;
 
 import javax.servlet.ServletContextEvent;

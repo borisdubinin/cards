@@ -1,4 +1,4 @@
-package com.example.repository;
+package com.example.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,7 +14,8 @@ public class DatabaseConfig {
 
     static {
         try {
-            initializeDataSource();
+            Properties props = loadDataBaseProperties();
+            initializeDataSource(props);
         } catch (IOException e) {
             throw new RuntimeException("Failed to initialize database configuration", e);
         }
@@ -31,9 +32,7 @@ public class DatabaseConfig {
         dataSource.close();
     }
 
-    private static void initializeDataSource() throws IOException {
-        Properties props = loadProperties();
-
+    private static void initializeDataSource(Properties props) throws IOException {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.postgresql.Driver");
         config.setJdbcUrl(props.getProperty("db.url"));
@@ -43,7 +42,7 @@ public class DatabaseConfig {
         dataSource = new HikariDataSource(config);
     }
 
-    private static Properties loadProperties() throws IOException {
+    private static Properties loadDataBaseProperties() throws IOException {
         Properties props = new Properties();
         try (InputStream input = DatabaseConfig.class.getClassLoader()
                 .getResourceAsStream(CONFIG_FILE)) {

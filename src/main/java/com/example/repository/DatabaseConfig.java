@@ -27,6 +27,10 @@ public class DatabaseConfig {
         return dataSource;
     }
 
+    public static void closeDataSource() {
+        dataSource.close();
+    }
+
     private static void initializeDataSource() throws IOException {
         Properties props = loadProperties();
 

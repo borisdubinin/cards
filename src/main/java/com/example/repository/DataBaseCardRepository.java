@@ -5,8 +5,6 @@ import com.example.exception.DataSourceConnectionException;
 import com.example.model.Card;
 import com.example.model.CardStatus;
 
-import org.flywaydb.core.Flyway;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,14 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class DataBaseCardRepository implements CardRepository {
-
-    static {
-        Flyway flyway = Flyway.configure()
-                .dataSource(DatabaseConfig.getDataSource())
-                .load();
-
-        flyway.migrate();
-    }
 
     @Override
     public Card insert(Card card) {

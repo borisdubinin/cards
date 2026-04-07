@@ -30,8 +30,8 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Card get(Long id) {
-        return cardRepository.get(id)
+    public Card getById(Long id) {
+        return cardRepository.getById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
     }
 
@@ -41,8 +41,8 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public void delete(Long id) {
-        cardRepository.delete(id)
+    public void deleteById(Long id) {
+        cardRepository.deleteById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
     }
 

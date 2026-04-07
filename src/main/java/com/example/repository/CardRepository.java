@@ -42,7 +42,7 @@ public interface CardRepository {
      * @throws NullPointerException if id is null
      * @throws RuntimeException if a database access error occurs
      */
-    Optional<Card> get(Long id);
+    Optional<Card> getById(Long id);
 
     /**
      * Returns a list of all cards in the repository.
@@ -65,5 +65,5 @@ public interface CardRepository {
      * @throws NullPointerException if id is null
      * @throws RuntimeException if a database access error occurs
      */
-    Optional<Card> delete(Long id);
+    Optional<Card> deleteById(Long id);
 }

@@ -43,7 +43,7 @@ public class MapCardRepository implements CardRepository {
     }
 
     @Override
-    public Optional<Card> get(Long id) {
+    public Optional<Card> getById(Long id) {
         return Optional.ofNullable(storage.get(id));
     }
 
@@ -53,7 +53,7 @@ public class MapCardRepository implements CardRepository {
     }
 
     @Override
-    public Optional<Card> delete(Long id) {
+    public Optional<Card> deleteById(Long id) {
         return Optional.ofNullable(storage.remove(id));
     }
 

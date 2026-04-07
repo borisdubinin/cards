@@ -93,7 +93,7 @@ public class DataBaseCardRepository implements CardRepository {
     }
 
     @Override
-    public Optional<Card> get(Long id) {
+    public Optional<Card> getById(Long id) {
         String sql = """
                 SELECT *
                 FROM cards
@@ -144,7 +144,7 @@ public class DataBaseCardRepository implements CardRepository {
     }
 
     @Override
-    public Optional<Card> delete(Long id) {
+    public Optional<Card> deleteById(Long id) {
         String sql = """
                 DELETE
                 FROM cards

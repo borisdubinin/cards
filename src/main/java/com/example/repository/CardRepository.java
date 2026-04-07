@@ -21,18 +21,22 @@ public interface CardRepository {
      *
      * @param card a {@link Card} object with required fields filled in
      * @return inserted card with generated id and createdAt fields
-     * @throws NullPointerException if cardData is null
+     * @throws NullPointerException if card is null
+     * @throws com.example.exception.RepositoryOperationException if internal errors occurs
      */
     Card insert(Card card);
 
     /**
      * Updates a card in storage with unique identifier equal to id
      *
-     * @param id id of the card that is being updated
+     * @param id   id of the card that is being updated
      * @param card a {@link Card} object. Null fields are not updated
-     * @return updated card with fields id, createdAt, updatedAt, or null if card with such id doesn't exist
+     * @return an {@link Optional} containing updated card with fields id, createdAt, updatedAt,
+     * or empty Optional if card with such id doesn't exist
+     * @throws NullPointerException if card is null
+     * @throws com.example.exception.RepositoryOperationException if internal errors occurs
      */
-    Card update(Long id, Card card);
+    Optional<Card> update(Long id, Card card);
 
     /**
      * Finds a card by its unique identifier.
@@ -40,7 +44,7 @@ public interface CardRepository {
      * @param id the unique identifier of the card, must not be null
      * @return an {@link Optional} containing the found card, or an empty Optional if not found
      * @throws NullPointerException if id is null
-     * @throws RuntimeException if a database access error occurs
+     * @throws com.example.exception.RepositoryOperationException if internal errors occurs
      */
     Optional<Card> getById(Long id);
 
@@ -50,7 +54,7 @@ public interface CardRepository {
      * <p>If no cards exist, an empty list is returned (not null).</p>
      *
      * @return a list of all cards, may be empty but never null
-     * @throws RuntimeException if a database access error occurs
+     * @throws com.example.exception.RepositoryOperationException if internal errors occurs
      */
     List<Card> getAll();
 
@@ -58,12 +62,12 @@ public interface CardRepository {
      * Deletes a card by its unique identifier.
      *
      * <p>After successful deletion, an {@link Optional} with the deleted card is returned.
-     * If no card with the specified ID exists, an empty Optional is returned.</p>
+     * If no card with the specified id exists, an empty Optional is returned.</p>
      *
      * @param id the unique identifier of the card to delete, must not be null
      * @return an {@link Optional} containing the deleted card, or an empty Optional if not found
      * @throws NullPointerException if id is null
-     * @throws RuntimeException if a database access error occurs
+     * @throws com.example.exception.RepositoryOperationException if internal errors occurs
      */
     Optional<Card> deleteById(Long id);
 }

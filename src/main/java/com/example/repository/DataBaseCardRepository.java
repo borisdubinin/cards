@@ -1,7 +1,6 @@
 package com.example.repository;
 
-import com.example.exception.DataConstraintViolationException;
-import com.example.exception.DataSourceConnectionException;
+import com.example.exception.RepositoryOperationException;
 import com.example.model.Card;
 import com.example.model.CardStatus;
 
@@ -36,18 +35,16 @@ public class DataBaseCardRepository implements CardRepository {
             query.setObject(5, card.getAccountId(), Types.BIGINT);
 
             ResultSet rs = query.executeQuery();
-            rs.next();
-
-            return parseResultSet(rs);
+            if (rs.next()) return parseResultSet(rs);
+            else throw new SQLException("Insert did not return a row");
 
         } catch (SQLException e) {
-            throwInformativeException(e);
-            return null;
+            throw new RepositoryOperationException(e.getMessage(), e);
         }
     }
 
     @Override
-    public Card update(Long id, Card card) {
+    public Optional<Card> update(Long id, Card card) {
         String sql = """
                 UPDATE cards SET
                     number = COALESCE(?, number),
@@ -72,13 +69,12 @@ public class DataBaseCardRepository implements CardRepository {
 
             ResultSet rs = query.executeQuery();
             if (rs.next()) {
-                return parseResultSet(rs);
+                return Optional.of(parseResultSet(rs));
             } else {
-                return null;
+                return Optional.empty();
             }
         } catch (SQLException e) {
-            throwInformativeException(e);
-            return null;
+            throw new RepositoryOperationException(e.getMessage(), e);
         }
     }
 
@@ -103,8 +99,7 @@ public class DataBaseCardRepository implements CardRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throwInformativeException(e);
-            return null;
+            throw new RepositoryOperationException(e.getMessage(), e);
         }
     }
 
@@ -128,8 +123,7 @@ public class DataBaseCardRepository implements CardRepository {
             return cards;
 
         } catch (SQLException e) {
-            throwInformativeException(e);
-            return null;
+            throw new RepositoryOperationException(e.getMessage(), e);
         }
     }
 
@@ -155,8 +149,7 @@ public class DataBaseCardRepository implements CardRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throwInformativeException(e);
-            return null;
+            throw new RepositoryOperationException(e.getMessage(), e);
         }
     }
 
@@ -177,13 +170,5 @@ public class DataBaseCardRepository implements CardRepository {
                 .map(Timestamp::toLocalDateTime)
                 .orElse(null));
         return card;
-    }
-
-    private static void throwInformativeException(SQLException e) {
-        switch(e.getSQLState().substring(0,1)) {
-            case "08" -> throw new DataSourceConnectionException(e.getMessage(), e);
-            case "23" -> throw new DataConstraintViolationException(e.getMessage(), e);
-            default -> throw new RuntimeException(e.getMessage());
-        }
     }
 }

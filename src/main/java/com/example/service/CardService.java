@@ -1,6 +1,7 @@
 package com.example.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.example.model.Card;
 import com.example.model.CardStatus;
@@ -41,7 +42,8 @@ public interface CardService {
      *
      * @param id     id of the card you need to edit
      * @param status status you want to set
-     * @return edited card
+     * @return {@link Optional } containing edited card
+     * or empty {@link Optional} if card with such id doesn't exist
      */
-    Card changeStatus(Long id, CardStatus status);
+    Optional<Card> changeStatus(Long id, CardStatus status);
 }

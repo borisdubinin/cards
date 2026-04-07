@@ -30,16 +30,16 @@ public class MapCardRepository implements CardRepository {
     }
 
     @Override
-    public Card update(Long id, Card card) {
+    public Optional<Card> update(Long id, Card card) {
         Card oldCard = storage.get(id);
-        if (oldCard == null) return null;
+        if (oldCard == null) return Optional.empty();
         oldCard.setNumber(Objects.requireNonNullElse(card.getNumber(), oldCard.getNumber()));
         oldCard.setHolderName(Objects.requireNonNullElse(card.getHolderName(), oldCard.getHolderName()));
         oldCard.setExpirationDate(Objects.requireNonNullElse(card.getExpirationDate(), oldCard.getExpirationDate()));
         oldCard.setStatus(Objects.requireNonNullElse(card.getStatus(), oldCard.getStatus()));
         oldCard.setAccountId(Objects.requireNonNullElse(card.getAccountId(), oldCard.getAccountId()));
         oldCard.setUpdatedAt(LocalDateTime.now());
-        return storage.put(oldCard.getId(), oldCard);
+        return Optional.ofNullable(storage.put(oldCard.getId(), oldCard));
     }
 
     @Override

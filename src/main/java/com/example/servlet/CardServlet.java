@@ -3,6 +3,7 @@ package com.example.servlet;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -182,8 +183,9 @@ public class CardServlet extends HttpServlet {
                 = JsonUtils.readValue(req.getReader(), CardChangeStatusRequestDto.class);
         validateChangeStatusRequest(cardChangeStatusRequestDto);
         CardStatus newStatus = cardChangeStatusRequestDto.status();
-        Card editedCard = cardService.changeStatus(id, newStatus);
-        CardResponseDto cardResponseDto = cardConverter.toDto(editedCard);
+        Optional<Card> editedCard = cardService.changeStatus(id, newStatus);
+        CardResponseDto cardResponseDto = editedCard
+                .map(card -> cardConverter.toDto(card)).orElse(null);
         writeJsonResponse(resp, HttpServletResponse.SC_OK, cardResponseDto);
     }
 

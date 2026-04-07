@@ -3,7 +3,6 @@ package com.example.service;
 import java.util.List;
 import java.time.YearMonth;
 
-import com.example.model.CardData;
 import com.example.repository.CardRepository;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,9 +48,9 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card changeStatus(Long id, CardStatus status) {
-        CardData cardData = new CardData();
-        cardData.setStatus(status);
-        return cardRepository.update(id, cardData);
+        Card card = new Card();
+        card.setStatus(status);
+        return cardRepository.update(id, card);
     }
 
     private void validateBeforeCreation(Card card) {

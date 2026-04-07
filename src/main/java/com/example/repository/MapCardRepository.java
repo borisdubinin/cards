@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.example.model.Card;
-import com.example.model.CardData;
 import com.example.model.CardStatus;
 import com.example.service.CardNumberGenerator;
 
@@ -25,29 +24,22 @@ public class MapCardRepository implements CardRepository {
     }
 
     @Override
-    public Card insert(CardData cardData) {
-        Card card = new Card();
+    public Card insert(Card card) {
         card.setId(idGenerator.getAndIncrement());
-        card.setNumber(cardData.getNumber());
-        card.setHolderName(cardData.getHolderName());
-        card.setExpirationDate(cardData.getExpirationDate());
-        card.setStatus(cardData.getStatus());
-        card.setAccountId(cardData.getAccountId());
-        card.setCreatedAt(LocalDateTime.now());
         return storage.put(card.getId(), card);
     }
 
     @Override
-    public Card update(Long id, CardData cardData) {
-        Card card = storage.get(id);
-        if (card == null) return null;
-        card.setNumber(Objects.requireNonNullElse(cardData.getNumber(), card.getNumber()));
-        card.setHolderName(Objects.requireNonNullElse(cardData.getHolderName(), card.getHolderName()));
-        card.setExpirationDate(Objects.requireNonNullElse(cardData.getExpirationDate(), card.getExpirationDate()));
-        card.setStatus(Objects.requireNonNullElse(cardData.getStatus(), card.getStatus()));
-        card.setAccountId(Objects.requireNonNullElse(cardData.getAccountId(), card.getAccountId()));
-        card.setUpdatedAt(LocalDateTime.now());
-        return storage.put(card.getId(), card);
+    public Card update(Long id, Card card) {
+        Card oldCard = storage.get(id);
+        if (oldCard == null) return null;
+        oldCard.setNumber(Objects.requireNonNullElse(card.getNumber(), oldCard.getNumber()));
+        oldCard.setHolderName(Objects.requireNonNullElse(card.getHolderName(), oldCard.getHolderName()));
+        oldCard.setExpirationDate(Objects.requireNonNullElse(card.getExpirationDate(), oldCard.getExpirationDate()));
+        oldCard.setStatus(Objects.requireNonNullElse(card.getStatus(), oldCard.getStatus()));
+        oldCard.setAccountId(Objects.requireNonNullElse(card.getAccountId(), oldCard.getAccountId()));
+        oldCard.setUpdatedAt(LocalDateTime.now());
+        return storage.put(oldCard.getId(), oldCard);
     }
 
     @Override

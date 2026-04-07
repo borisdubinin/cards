@@ -3,7 +3,6 @@ package com.example.repository;
 import com.example.exception.DataConstraintViolationException;
 import com.example.exception.DataSourceConnectionException;
 import com.example.model.Card;
-import com.example.model.CardData;
 import com.example.model.CardStatus;
 
 import org.flywaydb.core.Flyway;
@@ -30,7 +29,7 @@ public class DataBaseCardRepository implements CardRepository {
     }
 
     @Override
-    public Card insert(CardData cardData) {
+    public Card insert(Card card) {
         String sql = """
                 INSERT INTO cards (number, holderName, expirationDate, status, accountId)
                         VALUES (?, ?, ?, ?, ?)
@@ -40,11 +39,11 @@ public class DataBaseCardRepository implements CardRepository {
         try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
 
-            query.setString(1, cardData.getNumber());
-            query.setString(2, cardData.getHolderName());
-            query.setString(3, cardData.getExpirationDate() == null ? null : cardData.getExpirationDate().toString());
-            query.setString(4, cardData.getStatus() == null ? null : cardData.getStatus().toString());
-            query.setObject(5, cardData.getAccountId(), Types.BIGINT);
+            query.setString(1, card.getNumber());
+            query.setString(2, card.getHolderName());
+            query.setString(3, card.getExpirationDate() == null ? null : card.getExpirationDate().toString());
+            query.setString(4, card.getStatus() == null ? null : card.getStatus().toString());
+            query.setObject(5, card.getAccountId(), Types.BIGINT);
 
             ResultSet rs = query.executeQuery();
             rs.next();
@@ -58,7 +57,7 @@ public class DataBaseCardRepository implements CardRepository {
     }
 
     @Override
-    public Card update(Long id, CardData cardData) {
+    public Card update(Long id, Card card) {
         String sql = """
                 UPDATE cards SET
                     number = COALESCE(?, number),
@@ -74,11 +73,11 @@ public class DataBaseCardRepository implements CardRepository {
         try (Connection conn = getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
 
-            query.setString(1, cardData.getNumber());
-            query.setString(2, cardData.getHolderName());
-            query.setString(3, cardData.getExpirationDate() == null ? null : cardData.getExpirationDate().toString());
-            query.setString(4, cardData.getStatus() == null ? null : cardData.getStatus().toString());
-            query.setObject(5, cardData.getAccountId(), Types.BIGINT);
+            query.setString(1, card.getNumber());
+            query.setString(2, card.getHolderName());
+            query.setString(3, card.getExpirationDate() == null ? null : card.getExpirationDate().toString());
+            query.setString(4, card.getStatus() == null ? null : card.getStatus().toString());
+            query.setObject(5, card.getAccountId(), Types.BIGINT);
             query.setLong(6, id);
 
             ResultSet rs = query.executeQuery();

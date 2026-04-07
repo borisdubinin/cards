@@ -1,7 +1,6 @@
 package com.example.repository;
 
 import com.example.model.Card;
-import com.example.model.CardData;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,20 +19,20 @@ public interface CardRepository {
     /**
      * Inserts card with cardData into storage
      *
-     * @param cardData a {@link CardData} object with all fields filled in
+     * @param card a {@link Card} object with required fields filled in
      * @return inserted card with generated id and createdAt fields
      * @throws NullPointerException if cardData is null
      */
-    Card insert(CardData cardData);
+    Card insert(Card card);
 
     /**
      * Updates a card in storage with unique identifier equal to id
      *
      * @param id id of the card that is being updated
-     * @param cardData a {@link CardData} object. Null fields are not updated
+     * @param card a {@link Card} object. Null fields are not updated
      * @return updated card with fields id, createdAt, updatedAt, or null if card with such id doesn't exist
      */
-    Card update(Long id, CardData cardData);
+    Card update(Long id, Card card);
 
     /**
      * Finds a card by its unique identifier.

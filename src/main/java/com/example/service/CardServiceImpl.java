@@ -25,7 +25,7 @@ public class CardServiceImpl implements CardService {
 
         card.setExpirationDate(YearMonth.now().plusYears(3));
         card.setStatus(CardStatus.ACTIVE);
-        card.setNumber(CardNumberGenerator.generateUniqueNumber());
+        card.setNumber(CardNumberGenerator.generateRandomNumber());
 
         return cardRepository.insert(card);
     }

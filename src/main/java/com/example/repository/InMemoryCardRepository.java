@@ -61,7 +61,7 @@ public class InMemoryCardRepository implements CardRepository {
         Card card1 = new Card();
         card1.setExpirationDate(YearMonth.of(2027, 12));
         card1.setStatus(CardStatus.ACTIVE);
-        card1.setNumber(CardNumberGenerator.generateUniqueNumber());
+        card1.setNumber(CardNumberGenerator.generateRandomNumber());
         card1.setHolderName("IVAN PETROV");
         card1.setAccountId(1001L);
         insert(card1);
@@ -69,7 +69,7 @@ public class InMemoryCardRepository implements CardRepository {
         Card card2 = new Card();
         card2.setExpirationDate(YearMonth.of(2028, 9));
         card2.setStatus(CardStatus.BLOCKED);
-        card2.setNumber(CardNumberGenerator.generateUniqueNumber());
+        card2.setNumber(CardNumberGenerator.generateRandomNumber());
         card2.setHolderName("MARIA SOKOLOVA");
         card2.setAccountId(1002L);
         insert(card2);
@@ -77,7 +77,7 @@ public class InMemoryCardRepository implements CardRepository {
         Card card3 = new Card();
         card3.setExpirationDate(YearMonth.of(2026, 5));
         card3.setStatus(CardStatus.ACTIVE);
-        card3.setNumber(CardNumberGenerator.generateUniqueNumber());
+        card3.setNumber(CardNumberGenerator.generateRandomNumber());
         card3.setHolderName("PETR SIDOROV");
         card3.setAccountId(1003L);
         insert(card3);
@@ -85,7 +85,7 @@ public class InMemoryCardRepository implements CardRepository {
         Card card4 = new Card();
         card4.setExpirationDate(YearMonth.of(2026, 9));
         card4.setStatus(CardStatus.BLOCKED);
-        card4.setNumber(CardNumberGenerator.generateUniqueNumber());
+        card4.setNumber(CardNumberGenerator.generateRandomNumber());
         card4.setHolderName("ANNA VOLKOVA");
         card4.setAccountId(1004L);
         insert(card4);
@@ -93,7 +93,7 @@ public class InMemoryCardRepository implements CardRepository {
         Card card5 = new Card();
         card5.setExpirationDate(YearMonth.of(2028, 2));
         card5.setStatus(CardStatus.ACTIVE);
-        card5.setNumber(CardNumberGenerator.generateUniqueNumber());
+        card5.setNumber(CardNumberGenerator.generateRandomNumber());
         card5.setHolderName("ALEXEY MOROZOV");
         card5.setAccountId(1005L);
         insert(card5);

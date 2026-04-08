@@ -2,7 +2,6 @@ package com.example.service;
 
 import java.util.List;
 import java.time.YearMonth;
-import java.util.Optional;
 
 import com.example.repository.CardRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +47,11 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public Optional<Card> changeStatus(Long id, CardStatus status) {
+    public Card changeStatus(Long id, CardStatus status) {
         Card card = new Card();
         card.setStatus(status);
-        return cardRepository.update(id, card);
+        return cardRepository.update(id, card)
+                .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
     }
 
     private void validateBeforeCreation(Card card) {

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import com.example.model.Card;
 import com.example.model.CardStatus;
-import com.example.service.CardNumberGenerator;
+import com.example.utils.CardNumberGenerator;
 
 public class InMemoryCardRepository implements CardRepository {
 

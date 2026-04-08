@@ -4,6 +4,7 @@ import java.util.List;
 import java.time.YearMonth;
 
 import com.example.repository.CardRepository;
+import com.example.utils.CardNumberGenerator;
 import org.apache.commons.lang3.StringUtils;
 
 import com.example.model.Card;

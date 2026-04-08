@@ -3,7 +3,6 @@ package com.example.servlet;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.config.DatabaseConfig;
 import com.example.converter.CardConverter;
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
@@ -26,6 +26,7 @@ import com.example.repository.DataBaseCardRepository;
 import com.example.service.CardService;
 import com.example.service.CardServiceImpl;
 import com.example.utils.JsonUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 
 @WebServlet("/cards/*")
@@ -34,13 +35,14 @@ public class CardServlet extends HttpServlet {
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
     private CardService cardService;
     private CardConverter cardConverter;
-    private Logger logger;
+    private static final Logger logger = Logger.getLogger(CardServlet.class.getName());
 
     @Override
     public void init() {
-        this.cardService = new CardServiceImpl(new DataBaseCardRepository());
+        HikariDataSource dataSource = DatabaseConfig.getDataSource();
+        DataBaseCardRepository dataBaseCardRepository = new DataBaseCardRepository(dataSource);
+        this.cardService = new CardServiceImpl(dataBaseCardRepository);
         this.cardConverter = new CardConverter();
-        this.logger = Logger.getLogger(CardServlet.class.getName());
     }
 
     @Override

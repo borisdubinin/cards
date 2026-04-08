@@ -1,10 +1,10 @@
 package com.example.repository;
 
-import com.example.config.DatabaseConfig;
 import com.example.exception.DatabaseOperationException;
 import com.example.model.Card;
 import com.example.model.CardStatus;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,6 +18,12 @@ import java.util.Optional;
 
 public class DataBaseCardRepository implements CardRepository {
 
+    private final DataSource dataSource;
+
+    public DataBaseCardRepository(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
     @Override
     public Card insert(Card card) {
         String sql = """
@@ -26,7 +32,7 @@ public class DataBaseCardRepository implements CardRepository {
                         RETURNING id, number, holderName, expirationDate, status, accountId, createdAt, updatedAt
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
 
             query.setString(1, card.getNumber());
@@ -58,7 +64,7 @@ public class DataBaseCardRepository implements CardRepository {
                 RETURNING id, number, holderName, expirationDate, status, accountId, createdAt, updatedAt
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
 
             query.setString(1, card.getNumber());
@@ -87,7 +93,7 @@ public class DataBaseCardRepository implements CardRepository {
                 WHERE id = ?
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
 
             query.setLong(1, id);
@@ -111,7 +117,7 @@ public class DataBaseCardRepository implements CardRepository {
                 FROM cards
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
 
             ResultSet rs = query.executeQuery();
@@ -137,7 +143,7 @@ public class DataBaseCardRepository implements CardRepository {
                 RETURNING id, number, holderName, expirationDate, status, accountId, createdAt, updatedAt
                 """;
 
-        try (Connection conn = getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement query = conn.prepareStatement(sql)) {
 
             query.setLong(1, id);
@@ -152,10 +158,6 @@ public class DataBaseCardRepository implements CardRepository {
         } catch (SQLException e) {
             throw new DatabaseOperationException(e.getMessage(), e);
         }
-    }
-
-    private Connection getConnection() throws SQLException {
-        return DatabaseConfig.getDataSource().getConnection();
     }
 
     private Card parseResultSet(ResultSet rs) throws SQLException {

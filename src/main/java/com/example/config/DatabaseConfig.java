@@ -29,10 +29,12 @@ public class DatabaseConfig {
     }
 
     public static void closeDataSource() {
-        dataSource.close();
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+        }
     }
 
-    private static void initializeDataSource(Properties props) throws IOException {
+    private static void initializeDataSource(Properties props) {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.postgresql.Driver");
         config.setJdbcUrl(props.getProperty("db.url"));

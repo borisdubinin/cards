@@ -1,7 +1,7 @@
 package com.example.repository;
 
 import com.example.config.DatabaseConfig;
-import com.example.exception.RepositoryOperationException;
+import com.example.exception.DatabaseOperationException;
 import com.example.model.Card;
 import com.example.model.CardStatus;
 
@@ -40,7 +40,7 @@ public class DataBaseCardRepository implements CardRepository {
             else throw new SQLException("Insert did not return a row");
 
         } catch (SQLException e) {
-            throw new RepositoryOperationException(e.getMessage(), e);
+            throw new DatabaseOperationException(e.getMessage(), e);
         }
     }
 
@@ -75,7 +75,7 @@ public class DataBaseCardRepository implements CardRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new RepositoryOperationException(e.getMessage(), e);
+            throw new DatabaseOperationException(e.getMessage(), e);
         }
     }
 
@@ -100,7 +100,7 @@ public class DataBaseCardRepository implements CardRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new RepositoryOperationException(e.getMessage(), e);
+            throw new DatabaseOperationException(e.getMessage(), e);
         }
     }
 
@@ -124,7 +124,7 @@ public class DataBaseCardRepository implements CardRepository {
             return cards;
 
         } catch (SQLException e) {
-            throw new RepositoryOperationException(e.getMessage(), e);
+            throw new DatabaseOperationException(e.getMessage(), e);
         }
     }
 
@@ -150,7 +150,7 @@ public class DataBaseCardRepository implements CardRepository {
                 return Optional.empty();
             }
         } catch (SQLException e) {
-            throw new RepositoryOperationException(e.getMessage(), e);
+            throw new DatabaseOperationException(e.getMessage(), e);
         }
     }
 

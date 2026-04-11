@@ -27,6 +27,7 @@
         <flyway-core.version>12.3.0</flyway-core.version>
         <flyway-postgresql.version>12.2.0</flyway-postgresql.version>
         <hikaricp.version>7.0.2</hikaricp.version>
+        <spring.version>7.0.6</spring.version>
 
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -88,6 +89,24 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 

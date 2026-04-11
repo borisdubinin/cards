@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.example.config.DatabaseConfig;
 import com.example.converter.CardConverter;
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
@@ -19,15 +18,15 @@ import com.example.dto.CardChangeStatusRequestDto;
 import com.example.dto.ErrorResponseDto;
 import com.example.exception.BadRequestException;
 import com.example.exception.ResourceNotFoundException;
+import com.example.listener.SpringContextListener;
 import com.example.model.Card;
 import com.example.exception.EntityNotFoundException;
 import com.example.model.CardStatus;
-import com.example.repository.DataBaseCardRepository;
 import com.example.service.CardService;
-import com.example.service.CardServiceImpl;
 import com.example.utils.JsonUtils;
-import com.zaxxer.hikari.HikariDataSource;
+
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 
 @WebServlet("/cards/*")
 public class CardServlet extends HttpServlet {
@@ -39,10 +38,9 @@ public class CardServlet extends HttpServlet {
 
     @Override
     public void init() {
-        HikariDataSource dataSource = DatabaseConfig.getDataSource();
-        DataBaseCardRepository dataBaseCardRepository = new DataBaseCardRepository(dataSource);
-        this.cardService = new CardServiceImpl(dataBaseCardRepository);
-        this.cardConverter = new CardConverter();
+        ApplicationContext context = SpringContextListener.getContext();
+        this.cardService = context.getBean(CardService.class);
+        this.cardConverter = context.getBean(CardConverter.class);
     }
 
     @Override

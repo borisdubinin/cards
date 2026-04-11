@@ -33,9 +33,9 @@ import org.apache.commons.lang3.StringUtils;
 public class CardServlet extends HttpServlet {
 
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
+    private static final Logger logger = Logger.getLogger(CardServlet.class.getName());
     private CardService cardService;
     private CardConverter cardConverter;
-    private static final Logger logger = Logger.getLogger(CardServlet.class.getName());
 
     @Override
     public void init() {

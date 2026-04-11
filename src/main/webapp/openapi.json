@@ -1,0 +1,157 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Card API",
+    "version": "1.0.0",
+    "description": "API для управления картами"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/cards",
+      "description": "Локальный сервер"
+    }
+  ],
+  "paths": {
+    "/cards": {
+      "get": {
+        "summary": "Получить все карты",
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CardResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Создать новую карту",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Карта создана"
+          }
+        }
+      }
+    },
+    "/cards/{id}": {
+      "get": {
+        "summary": "Получить карту по ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешно"
+          },
+          "404": {
+            "description": "Карта не найдена"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Удалить карту",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Удалено"
+          }
+        }
+      }
+    },
+    "/cards/{id}/status": {
+      "patch": {
+        "summary": "Изменить статус карты",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardChangeStatusRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Статус изменён"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CardResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "number": { "type":  "string"},
+          "holderName": { "type": "string" },
+          "expirationDate": { "type":  "string"},
+          "status": { "type": "string" },
+          "accountId": { "type":  "integer"},
+          "createdAt": { "type":  "string"},
+          "updatedAt": { "type":  "string"}
+        }
+      },
+      "CardRequestDto": {
+        "type": "object",
+        "required": ["accountId", "holderName"],
+        "properties": {
+          "accountId": { "type": "integer" },
+          "holderName": { "type": "string" }
+        }
+      },
+      "CardChangeStatusRequestDto": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "type": "string", "enum": ["ACTIVE", "BLOCKED"] }
+        }
+      }
+    }
+  }
+}

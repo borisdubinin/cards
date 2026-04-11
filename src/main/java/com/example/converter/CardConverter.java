@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CardConverter {
-    
+
     public Card toModel(CardRequestDto requestDto) {
-        return Card.builder()
-                .holderName(requestDto.getHolderName())
-                .accountId(requestDto.getAccountId())
-                .build();
+        Card card = new Card();
+        card.setHolderName(requestDto.getHolderName());
+        card.setAccountId(requestDto.getAccountId());
+        return card;
     }
 
     public CardResponseDto toDto(Card card) {

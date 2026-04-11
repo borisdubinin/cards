@@ -1,88 +1,74 @@
 package com.example.repository;
 
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.List;
-import java.util.ArrayList;
-
+import com.example.exception.DatabaseOperationException;
 import com.example.model.Card;
-import com.example.model.CardStatus;
-import com.example.service.CardNumberGenerator;
 
-public class CardRepository {
+import java.util.List;
+import java.util.Optional;
 
-    private final Map<Long, Card> storage = new ConcurrentHashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+/**
+ * Repository for storing and managing card data.
+ * Provides methods for saving, searching, getting all, and deleting cards.
+ *
+ * <p>Implementations of this interface should ensure thread-safety</p>
+ *
+ * @see Card
+ * @version 1.0
+ */
+public interface CardRepository {
 
-    public CardRepository() {
-        initStorage();
-    }
+    /**
+     * Inserts card with cardData into storage
+     *
+     * @param card a {@link Card} object with required fields filled in
+     * @return inserted card with generated id and createdAt fields
+     * @throws NullPointerException if card is null
+     * @throws DatabaseOperationException if internal errors occurs
+     */
+    Card insert(Card card);
 
-    public Card save(Card card) {
-        if (card.getId() == null) {
-            card.setId(idGenerator.getAndIncrement());
-            card.setCreatedAt(LocalDateTime.now());
-        } else {
-            card.setUpdatedAt(LocalDateTime.now());
-        }
-        return storage.put(card.getId(), card);
-    }
+    /**
+     * Updates a card in storage with unique identifier equal to id
+     *
+     * @param id   id of the card that is being updated
+     * @param card a {@link Card} object. Null fields are not updated
+     * @return an {@link Optional} containing updated card with fields id, createdAt, updatedAt,
+     * or empty Optional if card with such id doesn't exist
+     * @throws NullPointerException if card is null
+     * @throws DatabaseOperationException if internal errors occurs
+     */
+    Optional<Card> update(Long id, Card card);
 
-    public Optional<Card> getById(Long id) {
-        return Optional.ofNullable(storage.get(id));
-    }
+    /**
+     * Finds a card by its unique identifier.
+     *
+     * @param id the unique identifier of the card, must not be null
+     * @return an {@link Optional} containing the found card, or an empty Optional if not found
+     * @throws NullPointerException if id is null
+     * @throws DatabaseOperationException if internal errors occurs
+     */
+    Optional<Card> getById(Long id);
 
-    public List<Card> getAll() {
-        return new ArrayList<>(storage.values());
-    }
+    /**
+     * Returns a list of all cards in the repository.
+     *
+     * <p>If no cards exist, an empty list is returned (not null).</p>
+     *
+     * @return a list of all cards, may be empty but never null
+     * @throws DatabaseOperationException if internal errors occurs
+     */
+    List<Card> getAll();
 
-    public Optional<Card> deleteById(Long id) {
-        return Optional.ofNullable(storage.remove(id));
-    }
-
-    private void initStorage() {
-        this.save(Card.builder()
-                .expirationDate(YearMonth.of(2027, 12))
-                .status(CardStatus.ACTIVE)
-                .number(CardNumberGenerator.generateUniqueNumber())
-                .holderName("IVAN PETROV")
-                .accountId(1001L)
-                .build());
-
-        this.save(Card.builder()
-                .expirationDate(YearMonth.of(2028, 9))
-                .status(CardStatus.ACTIVE)
-                .number(CardNumberGenerator.generateUniqueNumber())
-                .holderName("MARIA SOKOLOVA")
-                .accountId(1002L)
-                .build());
-
-        this.save(Card.builder()
-                .expirationDate(YearMonth.of(2026, 5))
-                .status(CardStatus.ACTIVE)
-                .number(CardNumberGenerator.generateUniqueNumber())
-                .holderName("PETR SIDOROV")
-                .accountId(1003L)
-                .build());
-
-        this.save(Card.builder()
-                .expirationDate(YearMonth.of(2026, 9))
-                .status(CardStatus.ACTIVE)
-                .number(CardNumberGenerator.generateUniqueNumber())
-                .holderName("ANNA VOLKOVA")
-                .accountId(1004L)
-                .build());
-
-        this.save(Card.builder()
-                .expirationDate(YearMonth.of(2028, 2))
-                .status(CardStatus.ACTIVE)
-                .number(CardNumberGenerator.generateUniqueNumber())
-                .holderName("ALEXEY MOROZOV")
-                .accountId(1005L)
-                .build());
-    }
+    /**
+     * Deletes a card by its unique identifier.
+     *
+     * <p>After successful deletion, an {@link Optional} with the deleted card is returned.
+     * If no card with the specified id exists, an empty Optional is returned.</p>
+     *
+     * @param id the unique identifier of the card to delete, must not be null
+     * @return an {@link Optional} containing the deleted card, or an empty Optional if not found
+     * @throws NullPointerException if id is null
+     * @throws DatabaseOperationException if internal errors occurs
+     */
+    Optional<Card> deleteById(Long id);
 }

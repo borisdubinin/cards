@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS cards (
+    id BIGSERIAL PRIMARY KEY,
+    number CHAR(19) NOT NULL UNIQUE,
+    holderName VARCHAR(50) NOT NULL,
+    expirationDate CHAR(7) NOT NULL,
+    status VARCHAR(12) NOT NULL,
+    accountId BIGINT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP
+);

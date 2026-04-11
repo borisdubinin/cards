@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.config.DatabaseConfig;
 import com.example.converter.CardConverter;
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
@@ -21,25 +22,27 @@ import com.example.exception.ResourceNotFoundException;
 import com.example.model.Card;
 import com.example.exception.EntityNotFoundException;
 import com.example.model.CardStatus;
-import com.example.repository.CardRepository;
+import com.example.repository.DataBaseCardRepository;
 import com.example.service.CardService;
 import com.example.service.CardServiceImpl;
 import com.example.utils.JsonUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.lang3.StringUtils;
 
 @WebServlet("/cards/*")
 public class CardServlet extends HttpServlet {
 
     private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
+    private static final Logger logger = Logger.getLogger(CardServlet.class.getName());
     private CardService cardService;
     private CardConverter cardConverter;
-    private Logger logger;
 
     @Override
     public void init() {
-        this.cardService = new CardServiceImpl(new CardRepository());
+        HikariDataSource dataSource = DatabaseConfig.getDataSource();
+        DataBaseCardRepository dataBaseCardRepository = new DataBaseCardRepository(dataSource);
+        this.cardService = new CardServiceImpl(dataBaseCardRepository);
         this.cardConverter = new CardConverter();
-        this.logger = Logger.getLogger(CardServlet.class.getName());
     }
 
     @Override
@@ -131,8 +134,8 @@ public class CardServlet extends HttpServlet {
     private void writeJsonResponse(HttpServletResponse resp, int status, Object dto) {
         try {
             resp.setContentType(CONTENT_TYPE);
-            JsonUtils.writeValue(resp.getWriter(), dto);
             resp.setStatus(status);
+            JsonUtils.writeValue(resp.getWriter(), dto);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error during json serialization: %s", e.getMessage());
         }
@@ -196,7 +199,7 @@ public class CardServlet extends HttpServlet {
     }
 
     private void handleDelete(Long id, HttpServletResponse resp) {
-        cardService.delete(id);
+        cardService.deleteById(id);
         resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }

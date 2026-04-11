@@ -34,7 +34,7 @@ public interface CardService {
      *
      * @param id id of the card you need to delete
      */
-    void delete(Long id);
+    void deleteById(Long id);
 
     /**
      * Changes the card status

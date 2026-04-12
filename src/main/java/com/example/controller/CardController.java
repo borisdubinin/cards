@@ -31,7 +31,7 @@ public class CardController {
     }
 
     @GetMapping("/{id}")
-    public CardResponseDto getById(@PathVariable Long id) {
+    public CardResponseDto getById(@PathVariable("id") Long id) {
         Card card = cardService.getById(id);
         return cardConverter.toDto(card);
     }
@@ -45,7 +45,7 @@ public class CardController {
     }
 
     @PatchMapping("/{id}/status")
-    public CardResponseDto changeStatus(@PathVariable Long id,
+    public CardResponseDto changeStatus(@PathVariable("id") Long id,
                                         @Valid @RequestBody CardChangeStatusRequestDto changeStatusRequestDto) {
         CardStatus newStatus = changeStatusRequestDto.status();
         Card updatedCard = cardService.changeStatus(id, newStatus);
@@ -54,7 +54,7 @@ public class CardController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         cardService.deleteById(id);
     }
 }

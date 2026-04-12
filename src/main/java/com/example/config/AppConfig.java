@@ -13,7 +13,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -23,7 +26,7 @@ import java.util.Properties;
 @Configuration
 @ComponentScan("com.example")
 @EnableWebMvc
-public class AppConfig {
+public class AppConfig implements WebMvcConfigurer {
 
     @Bean
     public Properties databaseProperties() throws IOException {
@@ -68,5 +71,16 @@ public class AppConfig {
     @Bean
     public CardConverter cardConverter() {
         return new CardConverter();
+    }
+
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/", "classpath:/public/");
     }
 }

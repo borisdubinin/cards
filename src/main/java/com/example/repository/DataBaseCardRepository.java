@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 public class DataBaseCardRepository implements CardRepository {
 
     private final DataSource dataSource;

@@ -2,7 +2,6 @@ package com.example.config;
 
 import com.example.converter.CardConverter;
 import com.example.repository.CardRepository;
-import com.example.repository.DataBaseCardRepository;
 import com.example.service.CardService;
 import com.example.service.CardServiceImpl;
 
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan("com.example.servlet")
+@ComponentScan("com.example")
 @EnableWebMvc
 public class AppConfig {
 
@@ -56,8 +56,8 @@ public class AppConfig {
     }
 
     @Bean
-    public CardRepository cardRepository(DataSource dataSource) {
-        return new DataBaseCardRepository(dataSource);
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 
     @Bean

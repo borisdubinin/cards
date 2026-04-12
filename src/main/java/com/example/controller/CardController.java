@@ -1,4 +1,4 @@
-package com.example.servlet;
+package com.example.controller;
 
 import com.example.converter.CardConverter;
 import com.example.dto.CardChangeStatusRequestDto;

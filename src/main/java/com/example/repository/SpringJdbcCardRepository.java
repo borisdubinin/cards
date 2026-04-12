@@ -20,7 +20,7 @@ public class SpringJdbcCardRepository implements CardRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Card> cardRowMapper = (rs, rowNum) -> {
+    private final RowMapper<Card> cardRowMapper = (rs, _) -> {
         Card card = new Card();
         card.setId(rs.getLong("id"));
         card.setNumber(rs.getString("number"));

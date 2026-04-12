@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
+@Deprecated
 public class JsonUtils {
 
     private static final ObjectMapper OBJECT_MAPPER = createObjectMapper();

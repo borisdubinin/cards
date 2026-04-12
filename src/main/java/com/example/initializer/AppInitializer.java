@@ -1,18 +1,17 @@
-package com.example.listener;
+package com.example.initializer;
 
 import com.example.config.AppConfig;
 import jakarta.servlet.ServletRegistration;
 import org.springframework.web.WebApplicationInitializer;
 
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 public class AppInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(AppConfig.class);
 

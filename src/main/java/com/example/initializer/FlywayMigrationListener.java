@@ -1,4 +1,4 @@
-package com.example.listener;
+package com.example.initializer;
 
 import com.example.config.DatabaseConfig;
 import org.flywaydb.core.Flyway;
@@ -6,7 +6,7 @@ import org.flywaydb.core.api.FlywayException;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

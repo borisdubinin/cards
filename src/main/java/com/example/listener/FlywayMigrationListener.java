@@ -4,13 +4,14 @@ import com.example.config.DatabaseConfig;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebListener
+@Deprecated
+//@WebListener
 public class FlywayMigrationListener implements ServletContextListener {
 
     private static final Logger logger = Logger.getLogger(FlywayMigrationListener.class.getName());

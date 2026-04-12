@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Deprecated
 public class DatabaseConfig {
 
     private static final String CONFIG_FILE = "db/config/database.properties";

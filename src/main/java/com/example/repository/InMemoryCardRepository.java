@@ -14,6 +14,7 @@ import com.example.model.Card;
 import com.example.model.CardStatus;
 import com.example.utils.CardNumberGenerator;
 
+@Deprecated
 public class InMemoryCardRepository implements CardRepository {
 
     private final Map<Long, Card> storage = new ConcurrentHashMap<>();

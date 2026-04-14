@@ -10,7 +10,7 @@ import java.util.Properties;
 @Deprecated
 public class DatabaseConfig {
 
-    private static final String CONFIG_FILE = "db/config/database.properties";
+    private static final String CONFIG_FILE = "application.properties";
     private static HikariDataSource dataSource;
 
     static {

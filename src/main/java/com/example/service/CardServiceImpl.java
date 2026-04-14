@@ -10,7 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import com.example.model.Card;
 import com.example.model.CardStatus;
 import com.example.exception.EntityNotFoundException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;

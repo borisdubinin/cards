@@ -1,22 +1,12 @@
 package com.example.config;
 
-import com.example.converter.CardConverter;
-import com.example.repository.CardRepository;
-import com.example.service.CardService;
-import com.example.service.CardServiceImpl;
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -24,9 +14,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan("com.example")
-@EnableWebMvc
-public class AppConfig implements WebMvcConfigurer {
+public class DbConfig {
 
     @Bean
     public Properties databaseProperties() throws IOException {
@@ -61,26 +49,5 @@ public class AppConfig implements WebMvcConfigurer {
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
-    }
-
-    @Bean
-    public CardService cardService(CardRepository cardRepository) {
-        return new CardServiceImpl(cardRepository);
-    }
-
-    @Bean
-    public CardConverter cardConverter() {
-        return new CardConverter();
-    }
-
-    @Override
-    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-        configurer.enable();
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/", "classpath:/public/");
     }
 }

@@ -37,8 +37,8 @@ public class CardController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CardResponseDto create(@Valid @RequestBody CardRequestDto cardRequestDto) {
-        Card newCard = cardConverter.toModel(cardRequestDto);
-        newCard = cardService.create(newCard);
+        Card card = cardConverter.toModel(cardRequestDto);
+        Card newCard = cardService.create(card);
         return cardConverter.toDto(newCard);
     }
 

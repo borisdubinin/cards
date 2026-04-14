@@ -8,7 +8,7 @@ import com.example.model.Card;
 import com.example.model.CardStatus;
 import com.example.service.CardService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +16,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cards")
+@RequiredArgsConstructor
 public class CardController {
 
-    @Autowired
-    private CardService cardService;
-
-    @Autowired
-    private CardConverter cardConverter;
+    private final CardService cardService;
+    private final CardConverter cardConverter;
 
     @GetMapping
     public List<CardResponseDto> getAll() {

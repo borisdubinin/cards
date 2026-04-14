@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DbConfig {
 
-    @Bean(destroyMethod = "close")
+    @Bean
     public DataSource dataSource(DatabaseProperties databaseProperties) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(databaseProperties.getDbUrl());

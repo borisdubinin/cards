@@ -3,7 +3,7 @@ package com.example.repository;
 import com.example.exception.DatabaseOperationException;
 import com.example.model.Card;
 import com.example.model.CardStatus;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class SpringJdbcCardRepository implements CardRepository {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     private final RowMapper<Card> cardRowMapper = (rs, _) -> {
         Card card = new Card();

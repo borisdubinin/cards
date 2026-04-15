@@ -7,13 +7,16 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@ComponentScan("com.example")
 @EnableWebMvc
+@ComponentScan(basePackages = {
+        "com.example.controller",
+        "com.example.exception"
+})
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/", "classpath:/public/");
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/static/swagger-ui/");
     }
 }

@@ -1,7 +1,9 @@
 package com.example.config;
 
+import com.example.config.properties.DatabaseProperties;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.RequiredArgsConstructor;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +12,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-public class DbConfig {
+@RequiredArgsConstructor
+public class DatabaseConfig {
+
+    private final DatabaseProperties databaseProperties;
 
     @Bean
-    public DataSource dataSource(DatabaseProperties databaseProperties) {
+    public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(databaseProperties.getDbUrl());
         config.setUsername(databaseProperties.getDbUser());

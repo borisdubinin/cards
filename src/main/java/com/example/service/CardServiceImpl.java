@@ -5,6 +5,7 @@ import java.time.YearMonth;
 
 import com.example.repository.CardRepository;
 import com.example.utils.CardNumberGenerator;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import com.example.model.Card;
@@ -13,13 +14,10 @@ import com.example.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
-
-    public CardServiceImpl(CardRepository cardRepository) {
-        this.cardRepository = cardRepository;
-    }
 
     @Override
     public Card create(Card card) {

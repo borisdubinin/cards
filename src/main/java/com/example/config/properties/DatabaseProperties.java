@@ -17,6 +17,6 @@ public class DatabaseProperties {
     @Value("${db.password}")
     private String dbPassword;
 
-    @Value("${driver.classname}")
+    @Value("${db.driver.classname}")
     private String driverClassName;
 }

@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class SpringJdbcCardRepository implements CardRepository {
+public class CardRepositoryImpl implements CardRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

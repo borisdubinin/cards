@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseDto handleArgumentNotValid(MethodArgumentNotValidException e) {
-        log.debug("Illegal argument was received: %s".formatted(e.getMessage()));
+        log.error("Illegal argument was received: %s".formatted(e.getMessage()));
         return new ErrorResponseDto(e.getMessage());
     }
 }

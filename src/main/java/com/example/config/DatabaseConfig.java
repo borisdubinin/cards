@@ -1,58 +1,41 @@
 package com.example.config;
 
+import com.example.config.properties.DatabaseProperties;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.RequiredArgsConstructor;
+import org.flywaydb.core.Flyway;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import javax.sql.DataSource;
 
+@Configuration
+@RequiredArgsConstructor
 public class DatabaseConfig {
 
-    private static final String CONFIG_FILE = "db/config/database.properties";
-    private static HikariDataSource dataSource;
+    private final DatabaseProperties databaseProperties;
 
-    static {
-        try {
-            Properties props = loadDataBaseProperties();
-            initializeDataSource(props);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to initialize database configuration", e);
-        }
-    }
-
-    public static HikariDataSource getDataSource() {
-        if (dataSource == null) {
-            throw new IllegalStateException("DataSource not initialized");
-        }
-        return dataSource;
-    }
-
-    public static void closeDataSource() {
-        if (dataSource != null && !dataSource.isClosed()) {
-            dataSource.close();
-        }
-    }
-
-    private static void initializeDataSource(Properties props) {
+    @Bean
+    public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        config.setDriverClassName("org.postgresql.Driver");
-        config.setJdbcUrl(props.getProperty("db.url"));
-        config.setUsername(props.getProperty("db.user"));
-        config.setPassword(props.getProperty("db.password"));
-
-        dataSource = new HikariDataSource(config);
+        config.setJdbcUrl(databaseProperties.getDbUrl());
+        config.setUsername(databaseProperties.getDbUser());
+        config.setPassword(databaseProperties.getDbPassword());
+        config.setDriverClassName(databaseProperties.getDriverClassName());
+        return new HikariDataSource(config);
     }
 
-    private static Properties loadDataBaseProperties() throws IOException {
-        Properties props = new Properties();
-        try (InputStream input = DatabaseConfig.class.getClassLoader()
-                .getResourceAsStream(CONFIG_FILE)) {
-            if (input == null) {
-                throw new IOException("Configuration file not found: " + CONFIG_FILE);
-            }
-            props.load(input);
-        }
-        return props;
+    @Bean(initMethod = "migrate")
+    public Flyway flyway(DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .load();
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 }

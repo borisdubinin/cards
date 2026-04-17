@@ -1,5 +1,7 @@
 package com.example.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +9,9 @@ import lombok.Setter;
 @Setter
 public class CardRequestDto {
 
+    @NotBlank
     private String holderName;
+
+    @NotNull
     private Long accountId;
 }

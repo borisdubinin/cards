@@ -1,0 +1,58 @@
+package com.example.controller;
+
+import com.example.converter.CardConverter;
+import com.example.dto.CardChangeStatusRequestDto;
+import com.example.dto.CardRequestDto;
+import com.example.dto.CardResponseDto;
+import com.example.model.Card;
+import com.example.model.CardStatus;
+import com.example.service.CardService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/cards")
+@RequiredArgsConstructor
+public class CardController {
+
+    private final CardService cardService;
+    private final CardConverter cardConverter;
+
+    @GetMapping
+    public List<CardResponseDto> getAll() {
+        List<Card> allCards = cardService.getAll();
+        return cardConverter.toDtos(allCards);
+    }
+
+    @GetMapping("/{id}")
+    public CardResponseDto getById(@PathVariable("id") Long id) {
+        Card card = cardService.getById(id);
+        return cardConverter.toDto(card);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public CardResponseDto create(@Valid @RequestBody CardRequestDto cardRequestDto) {
+        Card card = cardConverter.toModel(cardRequestDto);
+        Card newCard = cardService.create(card);
+        return cardConverter.toDto(newCard);
+    }
+
+    @PatchMapping("/{id}/status")
+    public CardResponseDto changeStatus(@PathVariable("id") Long id,
+                                        @Valid @RequestBody CardChangeStatusRequestDto changeStatusRequestDto) {
+        CardStatus newStatus = changeStatusRequestDto.status();
+        Card updatedCard = cardService.changeStatus(id, newStatus);
+        return cardConverter.toDto(updatedCard);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id) {
+        cardService.deleteById(id);
+    }
+}

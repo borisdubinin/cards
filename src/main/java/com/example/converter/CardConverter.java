@@ -3,10 +3,12 @@ package com.example.converter;
 import com.example.dto.CardRequestDto;
 import com.example.dto.CardResponseDto;
 import com.example.model.Card;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class CardConverter {
 
     public Card toModel(CardRequestDto requestDto) {

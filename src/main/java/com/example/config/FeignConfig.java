@@ -19,6 +19,6 @@ public class FeignConfig {
                 .decoder(new JacksonDecoder())
                 .logger(new Slf4jLogger(AccountClient.class))
                 .logLevel(Logger.Level.FULL)
-                .target(AccountClient.class, "http://localhost:8081");
+                .target(AccountClient.class, "http://accounts:8081");
     }
 }

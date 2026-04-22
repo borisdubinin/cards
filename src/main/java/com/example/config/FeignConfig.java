@@ -1,0 +1,24 @@
+package com.example.config;
+
+import com.example.client.AccountClient;
+import feign.Feign;
+import feign.Logger;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
+import feign.slf4j.Slf4jLogger;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class FeignConfig {
+
+    @Bean
+    public AccountClient accountClient() {
+        return Feign.builder()
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
+                .logger(new Slf4jLogger(AccountClient.class))
+                .logLevel(Logger.Level.FULL)
+                .target(AccountClient.class, "http://localhost:8081");
+    }
+}

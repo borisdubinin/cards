@@ -1,6 +1,7 @@
 package com.example.config;
 
 import com.example.client.AccountClient;
+import com.example.config.properties.FeignProperties;
 import feign.Feign;
 import feign.Logger;
 import feign.jackson.JacksonDecoder;
@@ -13,12 +14,12 @@ import org.springframework.context.annotation.Configuration;
 public class FeignConfig {
 
     @Bean
-    public AccountClient accountClient() {
+    public AccountClient accountClient(FeignProperties feignProperties) {
         return Feign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .logger(new Slf4jLogger(AccountClient.class))
                 .logLevel(Logger.Level.FULL)
-                .target(AccountClient.class, "http://accounts:8081");
+                .target(AccountClient.class, feignProperties.getFeignUrl());
     }
 }

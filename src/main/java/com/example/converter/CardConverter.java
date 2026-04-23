@@ -1,6 +1,6 @@
 package com.example.converter;
 
-import com.example.dto.CardRequestDto;
+import com.example.dto.CreateCardRequestDto;
 import com.example.dto.CardResponseDto;
 import com.example.model.Card;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Component
 public class CardConverter {
 
-    public Card toModel(CardRequestDto requestDto) {
+    public Card toModel(CreateCardRequestDto requestDto) {
         Card card = new Card();
         card.setHolderName(requestDto.getHolderName());
         card.setAccountId(requestDto.getAccountId());

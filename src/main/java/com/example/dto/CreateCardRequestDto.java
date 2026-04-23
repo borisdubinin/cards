@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CardRequestDto {
+public class CreateCardRequestDto {
 
     @NotBlank
     private String holderName;

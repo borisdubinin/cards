@@ -24,8 +24,7 @@
         <jackson-datatype.version>2.21.1</jackson-datatype.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <postgres-driver.version>42.7.10</postgres-driver.version>
-        <flyway-core.version>12.3.0</flyway-core.version>
-        <flyway-postgresql.version>12.2.0</flyway-postgresql.version>
+        <flyway.version>12.3.0</flyway.version>
         <hikaricp.version>7.0.2</hikaricp.version>
         <spring.version>7.0.6</spring.version>
         <hibernate-validator.version>9.1.0.Final</hibernate-validator.version>
@@ -78,13 +77,13 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>${flyway-core.version}</version>
+            <version>${flyway.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
-            <version>${flyway-postgresql.version}</version>
+            <version>${flyway.version}</version>
         </dependency>
 
         <dependency>

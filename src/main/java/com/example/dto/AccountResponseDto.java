@@ -15,6 +15,3 @@ public class AccountResponseDto {
     private AccountStatus status;
 }
 
-enum AccountStatus {
-    ACTIVE, BLOCKED
-}

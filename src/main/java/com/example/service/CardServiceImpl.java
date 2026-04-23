@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
-    private final AccountClient accountClient;
+    private final AccountService accountService;
 
     @Override
     public Card create(Card card) {
@@ -76,8 +76,7 @@ public class CardServiceImpl implements CardService {
         if (accountId == null) {
             throw new IllegalArgumentException("Account id is required");
         }
-        boolean accountExists = accountClient.getAccounts().stream()
-                .anyMatch(account -> Objects.equals(account.getId(), accountId));
+        boolean accountExists = accountService.exists(accountId);
         if (!accountExists) {
             throw new IllegalArgumentException("Account not found with id: %d".formatted(accountId));
         }

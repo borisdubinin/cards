@@ -20,6 +20,6 @@ public class FeignConfig {
                 .decoder(new JacksonDecoder())
                 .logger(new Slf4jLogger(AccountClient.class))
                 .logLevel(Logger.Level.FULL)
-                .target(AccountClient.class, feignProperties.getFeignUrl());
+                .target(AccountClient.class, feignProperties.getAccountsUrl());
     }
 }

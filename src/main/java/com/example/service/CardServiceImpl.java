@@ -2,7 +2,9 @@ package com.example.service;
 
 import java.util.List;
 import java.time.YearMonth;
+import java.util.Objects;
 
+import com.example.client.AccountClient;
 import com.example.repository.CardRepository;
 import com.example.utils.CardNumberGenerator;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
+    private final AccountService accountService;
 
     @Override
     public Card create(Card card) {
@@ -73,7 +76,7 @@ public class CardServiceImpl implements CardService {
         if (accountId == null) {
             throw new IllegalArgumentException("Account id is required");
         }
-        boolean accountExists = true;        // TODO: проверка на наличие счёта
+        boolean accountExists = accountService.exists(accountId);
         if (!accountExists) {
             throw new IllegalArgumentException("Account not found with id: %d".formatted(accountId));
         }

@@ -11,6 +11,6 @@ import org.springframework.context.annotation.Import;
         "com.example.service",
         "com.example.repository"
 })
-@Import({DatabaseConfig.class, PropertiesConfig.class})
+@Import({DatabaseConfig.class, PropertiesConfig.class, FeignConfig.class})
 public class RootConfig {
 }

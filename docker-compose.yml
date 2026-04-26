@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+
+  postgres_cards:
+    image: postgres:15
+    container_name: postgres_cards
+    environment:
+      POSTGRES_DB: cardsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - cards_data:/var/lib/postgresql/data
+    networks:
+      - accounts_cards_network
+
+  cards:
+    build: .
+    container_name: cards
+    depends_on:
+      - postgres_cards
+    ports:
+      - "8080:8080"
+    networks:
+      - accounts_cards_network
+
+volumes:
+  cards_data:
+
+networks:
+  accounts_cards_network:
+    external: true

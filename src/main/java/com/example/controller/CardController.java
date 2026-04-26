@@ -2,7 +2,7 @@ package com.example.controller;
 
 import com.example.converter.CardConverter;
 import com.example.dto.CardChangeStatusRequestDto;
-import com.example.dto.CardRequestDto;
+import com.example.dto.CreateCardRequestDto;
 import com.example.dto.CardResponseDto;
 import com.example.model.Card;
 import com.example.model.CardStatus;
@@ -36,8 +36,8 @@ public class CardController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CardResponseDto create(@Valid @RequestBody CardRequestDto cardRequestDto) {
-        Card card = cardConverter.toModel(cardRequestDto);
+    public CardResponseDto create(@Valid @RequestBody CreateCardRequestDto createCardRequestDto) {
+        Card card = cardConverter.toModel(createCardRequestDto);
         Card newCard = cardService.create(card);
         return cardConverter.toDto(newCard);
     }

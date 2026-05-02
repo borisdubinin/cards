@@ -8,6 +8,12 @@ import org.springframework.stereotype.Component;
 @Getter
 public class FeignProperties {
 
-    @Value("${getAccountsUrl}")
+    @Value("${feign.getAccountsUrl}")
     private String accountsUrl;
+
+    @Value("${feign.getAccountsUrl.username}")
+    private String username;
+
+    @Value("${feign.getAccountsUrl.password}")
+    private String password;
 }

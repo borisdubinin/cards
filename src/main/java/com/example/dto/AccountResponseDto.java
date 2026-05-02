@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Getter
 public class AccountResponseDto {
 
-    private Long id;
+    private String iban;
     private BigDecimal balance;
     private String currency;
     private AccountStatus status;

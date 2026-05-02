@@ -14,7 +14,7 @@ public class CardConverter {
     public Card toModel(CreateCardRequestDto requestDto) {
         Card card = new Card();
         card.setHolderName(requestDto.getHolderName());
-        card.setAccountId(requestDto.getAccountId());
+        card.setIban(requestDto.getIban());
         return card;
     }
 
@@ -25,7 +25,7 @@ public class CardConverter {
                 .holderName(card.getHolderName())
                 .expirationDate(card.getExpirationDate())
                 .status(card.getStatus())
-                .accountId(card.getAccountId())
+                .iban(card.getIban())
                 .createdAt(card.getCreatedAt())
                 .updatedAt(card.getUpdatedAt())
                 .build();

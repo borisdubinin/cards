@@ -24,7 +24,7 @@ public class CardRepositoryImpl implements CardRepository {
             rs.getString("holderName"),
             YearMonth.parse(rs.getString("expirationDate")),
             CardStatus.valueOf(rs.getString("status")),
-            rs.getLong("accountId"),
+            rs.getString("iban"),
             rs.getTimestamp("createdAt").toLocalDateTime(),
             Optional.ofNullable(rs.getTimestamp("updatedAt"))
                     .map(Timestamp::toLocalDateTime)
@@ -48,7 +48,7 @@ public class CardRepositoryImpl implements CardRepository {
     @Override
     public Card insert(Card card) {
         String sql = """
-                INSERT INTO cards (number, holderName, expirationDate, status, accountId)
+                INSERT INTO cards (number, holderName, expirationDate, status, iban)
                 VALUES (?, ?, ?, ?, ?)
                 RETURNING *
                 """;
@@ -58,7 +58,7 @@ public class CardRepositoryImpl implements CardRepository {
                 card.getHolderName(),
                 card.getExpirationDate() != null ? card.getExpirationDate().toString() : null,
                 card.getStatus() != null ? card.getStatus().toString() : null,
-                card.getAccountId()
+                card.getIban()
         );
     }
 
@@ -70,7 +70,7 @@ public class CardRepositoryImpl implements CardRepository {
                     holderName = COALESCE(?, holderName),
                     expirationDate = COALESCE(?, expirationDate),
                     status = COALESCE(?, status),
-                    accountId = COALESCE(?, accountId),
+                    iban = COALESCE(?, iban),
                     updatedAt = CURRENT_TIMESTAMP
                 WHERE id = ?
                 RETURNING *
@@ -81,7 +81,7 @@ public class CardRepositoryImpl implements CardRepository {
                         card.getHolderName(),
                         card.getExpirationDate() != null ? card.getExpirationDate().toString() : null,
                         card.getStatus() != null ? card.getStatus().toString() : null,
-                        card.getAccountId(),
+                        card.getIban(),
                         id
                 ).stream()
                 .findFirst();

@@ -19,7 +19,7 @@ public class Card {
     private String holderName;
     private YearMonth expirationDate;
     private CardStatus status;
-    private Long accountId;
+    private String iban;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

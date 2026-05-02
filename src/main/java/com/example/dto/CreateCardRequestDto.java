@@ -1,7 +1,7 @@
 package com.example.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +12,7 @@ public class CreateCardRequestDto {
     @NotBlank
     private String holderName;
 
-    @NotNull
-    private Long accountId;
+    @NotBlank
+    @Size(min = 32, max = 32)
+    private String iban;
 }

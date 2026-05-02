@@ -4,8 +4,8 @@ public interface AccountService {
 
     /**
      *
-     * @param id id of the account
+     * @param iban IBAN of the account
      * @return true, if account with such id exists, false otherwise
      */
-    boolean exists(Long id);
+    boolean exists(String iban);
 }

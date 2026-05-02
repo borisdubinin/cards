@@ -22,7 +22,7 @@ public class CardResponseDto {
     private YearMonth expirationDate;
 
     private CardStatus status;
-    private Long accountId;
+    private String iban;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;

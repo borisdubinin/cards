@@ -2,9 +2,7 @@ package com.example.service;
 
 import java.util.List;
 import java.time.YearMonth;
-import java.util.Objects;
 
-import com.example.client.AccountClient;
 import com.example.repository.CardRepository;
 import com.example.utils.CardNumberGenerator;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +61,7 @@ public class CardServiceImpl implements CardService {
             throw new IllegalArgumentException("Card is required");
         }
         checkHolderNameCorrectness(card.getHolderName());
-        checkAccountIdCorrectness(card.getAccountId());
+        checkIbanCorrectness(card.getIban());
     }
 
     private void checkHolderNameCorrectness(String holderName) {
@@ -72,13 +70,10 @@ public class CardServiceImpl implements CardService {
         }
     }
 
-    private void checkAccountIdCorrectness(Long accountId) {
-        if (accountId == null) {
-            throw new IllegalArgumentException("Account id is required");
-        }
-        boolean accountExists = accountService.exists(accountId);
+    private void checkIbanCorrectness(String iban) {
+        boolean accountExists = accountService.exists(iban);
         if (!accountExists) {
-            throw new IllegalArgumentException("Account not found with id: %d".formatted(accountId));
+            throw new IllegalArgumentException("Account not found with IBAN: %s".formatted(iban));
         }
     }
 }

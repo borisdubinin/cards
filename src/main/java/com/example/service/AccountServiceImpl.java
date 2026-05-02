@@ -13,8 +13,8 @@ public class AccountServiceImpl implements AccountService {
     private final AccountClient accountClient;
 
     @Override
-    public boolean exists(Long id) {
+    public boolean exists(String iban) {
         return accountClient.getAccounts().stream()
-                .anyMatch(account -> Objects.equals(account.getId(), id));
+                .anyMatch(account -> Objects.equals(account.getIban(), iban));
     }
 }

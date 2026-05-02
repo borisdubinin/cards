@@ -7,7 +7,6 @@ import lombok.Getter;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @Builder
@@ -23,10 +22,4 @@ public class CardResponseDto {
 
     private CardStatus status;
     private String iban;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime updatedAt;
 }

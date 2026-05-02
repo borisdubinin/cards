@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.model.Card;
+import com.example.entity.CardEntity;
 import com.example.model.CardStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +18,7 @@ public class CardRepositoryImpl implements CardRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<Card> cardRowMapper = (rs, _) -> new Card(
+    private final RowMapper<CardEntity> cardRowMapper = (rs, _) -> new CardEntity(
             rs.getLong("id"),
             rs.getString("number"),
             rs.getString("holderName"),
@@ -32,7 +32,7 @@ public class CardRepositoryImpl implements CardRepository {
     );
 
     @Override
-    public Optional<Card> getById(Long id) {
+    public Optional<CardEntity> getById(Long id) {
         String sql = "SELECT * FROM cards WHERE id = ?";
         return jdbcTemplate.query(sql, cardRowMapper, id)
                 .stream()
@@ -40,13 +40,13 @@ public class CardRepositoryImpl implements CardRepository {
     }
 
     @Override
-    public List<Card> getAll() {
+    public List<CardEntity> getAll() {
         String sql = "SELECT * FROM cards";
         return jdbcTemplate.query(sql, cardRowMapper);
     }
 
     @Override
-    public Card insert(Card card) {
+    public CardEntity insert(CardEntity cardEntity) {
         String sql = """
                 INSERT INTO cards (number, holderName, expirationDate, status, iban)
                 VALUES (?, ?, ?, ?, ?)
@@ -54,16 +54,16 @@ public class CardRepositoryImpl implements CardRepository {
                 """;
 
         return jdbcTemplate.queryForObject(sql, cardRowMapper,
-                card.getNumber(),
-                card.getHolderName(),
-                card.getExpirationDate() != null ? card.getExpirationDate().toString() : null,
-                card.getStatus() != null ? card.getStatus().toString() : null,
-                card.getIban()
+                cardEntity.getNumber(),
+                cardEntity.getHolderName(),
+                cardEntity.getExpirationDate() != null ? cardEntity.getExpirationDate().toString() : null,
+                cardEntity.getStatus() != null ? cardEntity.getStatus().toString() : null,
+                cardEntity.getIban()
         );
     }
 
     @Override
-    public Optional<Card> update(Long id, Card card) {
+    public Optional<CardEntity> update(Long id, CardEntity cardEntity) {
         String sql = """
                 UPDATE cards SET
                     number = COALESCE(?, number),
@@ -77,18 +77,18 @@ public class CardRepositoryImpl implements CardRepository {
                 """;
 
         return jdbcTemplate.query(sql, cardRowMapper,
-                        card.getNumber(),
-                        card.getHolderName(),
-                        card.getExpirationDate() != null ? card.getExpirationDate().toString() : null,
-                        card.getStatus() != null ? card.getStatus().toString() : null,
-                        card.getIban(),
+                        cardEntity.getNumber(),
+                        cardEntity.getHolderName(),
+                        cardEntity.getExpirationDate() != null ? cardEntity.getExpirationDate().toString() : null,
+                        cardEntity.getStatus() != null ? cardEntity.getStatus().toString() : null,
+                        cardEntity.getIban(),
                         id
                 ).stream()
                 .findFirst();
     }
 
     @Override
-    public Optional<Card> deleteById(Long id) {
+    public Optional<CardEntity> deleteById(Long id) {
         String sql = "DELETE FROM cards WHERE id = ? RETURNING *";
         return jdbcTemplate.query(sql, cardRowMapper, id)
                 .stream()

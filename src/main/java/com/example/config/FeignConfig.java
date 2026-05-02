@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Configuration;
 public class FeignConfig {
 
     @Bean
-    public RequestInterceptor basicAuthRequestInterceptor(FeignProperties feignProperties) {
+    public RequestInterceptor accountsAuthRequestInterceptor(FeignProperties feignProperties) {
         return new BasicAuthRequestInterceptor(
-                feignProperties.getUsername(),
-                feignProperties.getPassword()
+                feignProperties.getAccountsUsername(),
+                feignProperties.getAccountsPassword()
         );
     }
 

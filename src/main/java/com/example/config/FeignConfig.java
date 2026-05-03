@@ -9,13 +9,14 @@ import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.slf4j.Slf4jLogger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FeignConfig {
 
-    @Bean
+    @Bean(name = "accountsRequestInterceptor")
     public RequestInterceptor accountsAuthRequestInterceptor(FeignProperties feignProperties) {
         return new BasicAuthRequestInterceptor(
                 feignProperties.getAccountsUsername(),
@@ -26,13 +27,13 @@ public class FeignConfig {
     @Bean
     public AccountClient accountClient(
             FeignProperties feignProperties,
-            RequestInterceptor basicAuthRequestInterceptor) {
+            @Qualifier(value = "accountsRequestInterceptor") RequestInterceptor requestInterceptor) {
         return Feign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
                 .logger(new Slf4jLogger(AccountClient.class))
                 .logLevel(Logger.Level.FULL)
-                .requestInterceptor(basicAuthRequestInterceptor)
+                .requestInterceptor(requestInterceptor)
                 .target(AccountClient.class, feignProperties.getAccountsUrl());
     }
 }

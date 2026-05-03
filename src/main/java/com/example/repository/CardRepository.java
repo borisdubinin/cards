@@ -1,7 +1,7 @@
 package com.example.repository;
 
+import com.example.entity.CardEntity;
 import com.example.exception.DatabaseOperationException;
-import com.example.model.Card;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * <p>Implementations of this interface should ensure thread-safety</p>
  *
- * @see Card
+ * @see CardEntity
  * @version 1.0
  */
 public interface CardRepository {
@@ -20,24 +20,24 @@ public interface CardRepository {
     /**
      * Inserts card with cardData into storage
      *
-     * @param card a {@link Card} object with required fields filled in
+     * @param cardEntity a {@link CardEntity} object with required fields filled in
      * @return inserted card with generated id and createdAt fields
      * @throws NullPointerException if card is null
      * @throws DatabaseOperationException if internal errors occurs
      */
-    Card insert(Card card);
+    CardEntity insert(CardEntity cardEntity);
 
     /**
      * Updates a card in storage with unique identifier equal to id
      *
      * @param id   id of the card that is being updated
-     * @param card a {@link Card} object. Null fields are not updated
+     * @param cardEntity a {@link CardEntity} object. Null fields are not updated
      * @return an {@link Optional} containing updated card with fields id, createdAt, updatedAt,
      * or empty Optional if card with such id doesn't exist
      * @throws NullPointerException if card is null
      * @throws DatabaseOperationException if internal errors occurs
      */
-    Optional<Card> update(Long id, Card card);
+    Optional<CardEntity> update(Long id, CardEntity cardEntity);
 
     /**
      * Finds a card by its unique identifier.
@@ -47,7 +47,7 @@ public interface CardRepository {
      * @throws NullPointerException if id is null
      * @throws DatabaseOperationException if internal errors occurs
      */
-    Optional<Card> getById(Long id);
+    Optional<CardEntity> getById(Long id);
 
     /**
      * Returns a list of all cards in the repository.
@@ -57,7 +57,7 @@ public interface CardRepository {
      * @return a list of all cards, may be empty but never null
      * @throws DatabaseOperationException if internal errors occurs
      */
-    List<Card> getAll();
+    List<CardEntity> getAll();
 
     /**
      * Deletes a card by its unique identifier.
@@ -70,5 +70,5 @@ public interface CardRepository {
      * @throws NullPointerException if id is null
      * @throws DatabaseOperationException if internal errors occurs
      */
-    Optional<Card> deleteById(Long id);
+    Optional<CardEntity> deleteById(Long id);
 }

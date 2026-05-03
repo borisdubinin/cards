@@ -2,9 +2,9 @@ package com.example.service;
 
 import java.util.List;
 import java.time.YearMonth;
-import java.util.Objects;
 
-import com.example.client.AccountClient;
+import com.example.converter.CardConverter;
+import com.example.entity.CardEntity;
 import com.example.repository.CardRepository;
 import com.example.utils.CardNumberGenerator;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,7 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepository;
     private final AccountService accountService;
+    private final CardConverter cardConverter;
 
     @Override
     public Card create(Card card) {
@@ -29,19 +30,22 @@ public class CardServiceImpl implements CardService {
         card.setExpirationDate(YearMonth.now().plusYears(3));
         card.setStatus(CardStatus.ACTIVE);
         card.setNumber(CardNumberGenerator.generateRandomCardNumber());
-
-        return cardRepository.insert(card);
+        CardEntity cardEntity = cardConverter.toEntity(card);
+        CardEntity newEntity = cardRepository.insert(cardEntity);
+        return cardConverter.toModel(newEntity);
     }
 
     @Override
     public Card getById(Long id) {
-        return cardRepository.getById(id)
+        CardEntity cardEntity = cardRepository.getById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
+        return cardConverter.toModel(cardEntity);
     }
 
     @Override
     public List<Card> getAll() {
-        return cardRepository.getAll();
+        List<CardEntity> allEntities = cardRepository.getAll();
+        return cardConverter.toModels(allEntities);
     }
 
     @Override
@@ -52,10 +56,11 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public Card changeStatus(Long id, CardStatus status) {
-        Card card = new Card();
-        card.setStatus(status);
-        return cardRepository.update(id, card)
+        CardEntity cardEntity = new CardEntity();
+        cardEntity.setStatus(status);
+        CardEntity newEntity = cardRepository.update(id, cardEntity)
                 .orElseThrow(() -> new EntityNotFoundException("Card not found with id: %d".formatted(id)));
+        return cardConverter.toModel(newEntity);
     }
 
     private void validateBeforeCreation(Card card) {
@@ -63,7 +68,7 @@ public class CardServiceImpl implements CardService {
             throw new IllegalArgumentException("Card is required");
         }
         checkHolderNameCorrectness(card.getHolderName());
-        checkAccountIdCorrectness(card.getAccountId());
+        checkIbanCorrectness(card.getIban());
     }
 
     private void checkHolderNameCorrectness(String holderName) {
@@ -72,13 +77,10 @@ public class CardServiceImpl implements CardService {
         }
     }
 
-    private void checkAccountIdCorrectness(Long accountId) {
-        if (accountId == null) {
-            throw new IllegalArgumentException("Account id is required");
-        }
-        boolean accountExists = accountService.exists(accountId);
+    private void checkIbanCorrectness(String iban) {
+        boolean accountExists = accountService.exists(iban);
         if (!accountExists) {
-            throw new IllegalArgumentException("Account not found with id: %d".formatted(accountId));
+            throw new IllegalArgumentException("Account not found with IBAN: %s".formatted(iban));
         }
     }
 }
